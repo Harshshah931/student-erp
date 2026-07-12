@@ -11,15 +11,24 @@ export const login = async (req: Request, res: Response) => {
 
     const { email, password } = parsed.data;
 
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-    if (error) return res.status(401).json({ error: error.message });
+    if (error || !data.user) {
+      return res.status(401).json({ error: error?.message || 'Invalid credentials' });
+    }
 
-    const { data: userData } = await supabase
+    const { data: userData, error: userError } = await supabase
       .from('users')
       .select('*, roles(name)')
       .eq('id', data.user.id)
       .single();
+
+    if (userError || !userData) {
+      return res.status(401).json({ error: 'User profile not found' });
+    }
 
     return res.json({
       token: data.session.access_token,
@@ -53,13 +62,15 @@ export const register = async (req: Request, res: Response) => {
       .eq('name', role)
       .single();
 
-    await supabase.from('users').insert({
+    const { error: userError } = await supabase.from('users').insert({
       id: authData.user.id,
       email,
       full_name,
       phone,
       role_id: roleData?.id,
     });
+
+    if (userError) return res.status(400).json({ error: userError.message });
 
     return res.status(201).json({ message: 'User created successfully' });
   } catch (err) {
@@ -70,4 +81,65 @@ export const register = async (req: Request, res: Response) => {
 export const logout = async (req: Request, res: Response) => {
   await supabase.auth.signOut();
   return res.json({ message: 'Logged out successfully' });
+};
+
+export const seedUsers = async (req: Request, res: Response) => {
+  const users = req.body.users;
+  const results = [];
+
+  for (const user of users) {
+    try {
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email: user.email,
+        password: user.password,
+        email_confirm: true,
+      });
+
+      if (authError) {
+        results.push({ email: user.email, status: 'failed', error: authError.message });
+        continue;
+      }
+
+      const { data: roleData } = await supabase
+        .from('roles').select('id').eq('name', user.role).single();
+
+      await supabase.from('users').insert({
+        id: authData.user.id,
+        email: user.email,
+        full_name: user.full_name,
+        phone: user.phone || null,
+        role_id: roleData?.id,
+      });
+
+      // If student, also insert into students table
+      if (user.role === 'student' && user.department_id) {
+        await supabase.from('students').insert({
+          user_id: authData.user.id,
+          department_id: user.department_id,
+          enrollment_number: user.enrollment_number,
+          semester: user.semester,
+          batch_year: user.batch_year,
+          gender: user.gender || 'male',
+          dob: user.dob || '2000-01-01',
+        });
+      }
+
+      // If faculty, also insert into faculty table
+      if (user.role === 'faculty' && user.department_id) {
+        await supabase.from('faculty').insert({
+          user_id: authData.user.id,
+          department_id: user.department_id,
+          employee_code: user.employee_code,
+          designation: user.designation || 'Lecturer',
+          joining_date: user.joining_date || '2020-01-01',
+        });
+      }
+
+      results.push({ email: user.email, status: 'success' });
+    } catch (err: any) {
+      results.push({ email: user.email, status: 'failed', error: err.message });
+    }
+  }
+
+  return res.json({ total: users.length, results });
 };
