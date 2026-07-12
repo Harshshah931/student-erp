@@ -96,14 +96,18 @@ export const seedUsers = async (req: Request, res: Response) => {
       });
 
       if (authError) {
-        results.push({ email: user.email, status: 'failed', error: authError.message });
+        results.push({ 
+          email: user.email, 
+          status: 'failed', 
+          error: authError.message || JSON.stringify(authError)
+        });
         continue;
       }
 
       const { data: roleData } = await supabase
         .from('roles').select('id').eq('name', user.role).single();
 
-      await supabase.from('users').insert({
+      const { error: userError } = await supabase.from('users').insert({
         id: authData.user.id,
         email: user.email,
         full_name: user.full_name,
@@ -111,9 +115,17 @@ export const seedUsers = async (req: Request, res: Response) => {
         role_id: roleData?.id,
       });
 
-      // If student, also insert into students table
+      if (userError) {
+        results.push({ 
+          email: user.email, 
+          status: 'failed', 
+          error: userError.message || JSON.stringify(userError)
+        });
+        continue;
+      }
+
       if (user.role === 'student' && user.department_id) {
-        await supabase.from('students').insert({
+        const { error: studentError } = await supabase.from('students').insert({
           user_id: authData.user.id,
           department_id: user.department_id,
           enrollment_number: user.enrollment_number,
@@ -122,22 +134,33 @@ export const seedUsers = async (req: Request, res: Response) => {
           gender: user.gender || 'male',
           dob: user.dob || '2000-01-01',
         });
+        if (studentError) {
+          results.push({ email: user.email, status: 'failed', error: studentError.message });
+          continue;
+        }
       }
 
-      // If faculty, also insert into faculty table
       if (user.role === 'faculty' && user.department_id) {
-        await supabase.from('faculty').insert({
+        const { error: facultyError } = await supabase.from('faculty').insert({
           user_id: authData.user.id,
           department_id: user.department_id,
           employee_code: user.employee_code,
           designation: user.designation || 'Lecturer',
           joining_date: user.joining_date || '2020-01-01',
         });
+        if (facultyError) {
+          results.push({ email: user.email, status: 'failed', error: facultyError.message });
+          continue;
+        }
       }
 
       results.push({ email: user.email, status: 'success' });
     } catch (err: any) {
-      results.push({ email: user.email, status: 'failed', error: err.message });
+      results.push({ 
+        email: user.email, 
+        status: 'failed', 
+        error: err.message || String(err)
+      });
     }
   }
 
