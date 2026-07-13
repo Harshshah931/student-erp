@@ -157,7 +157,13 @@
 <script>
   const API_URL = 'https://student-erp-backend-v7f3.onrender.com';
   const token = localStorage.getItem('token');
-  if (!token) window.location.href = '../login_edumanage_erp/code.html';
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const role = user?.roles?.name;
+
+  if (!token || role !== 'admin') {
+    alert('Access denied. Admins only.');
+    window.location.href = '../login_edumanage_erp/code.html';
+  }
 
   const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
   let allFees = [];
