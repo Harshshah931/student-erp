@@ -31,7 +31,17 @@ export const login = async (req: Request, res: Response) => {
     if (userError || !userData) {
       return res.status(401).json({ error: 'User profile not found' });
     }
+<<<<<<< Updated upstream
  
+=======
+
+    const { data: roleData, error: roleError } = await supabaseAdmin
+      .from('roles')
+      .select('name')
+      .eq('id', userData.role_id)
+      .single();
+
+>>>>>>> Stashed changes
     return res.json({
       token: data.session.access_token,
       user: userData,
@@ -58,8 +68,13 @@ export const register = async (req: Request, res: Response) => {
     });
  
     if (authError) return res.status(400).json({ error: authError.message });
+<<<<<<< Updated upstream
  
     const { data: roleData } = await supabase
+=======
+
+    const { data: roleData, error: roleError } = await supabaseAdmin
+>>>>>>> Stashed changes
       .from('roles')
       .select('id')
       .eq('name', role)
@@ -106,6 +121,7 @@ export const seedUsers = async (req: Request, res: Response) => {
         });
         continue;
       }
+<<<<<<< Updated upstream
  
       const { data: roleData } = await supabase
         .from('roles')
@@ -115,6 +131,14 @@ export const seedUsers = async (req: Request, res: Response) => {
  
       const { error: userError } = await supabase.from('users').insert({
         id: authData.user.id,
+=======
+
+      const { data: roleData, error: roleError } = await supabaseAdmin
+        .from('roles').select('id').eq('name', user.role).single();
+
+      const { error: userError } = await supabaseAdmin.from('users').upsert({
+        id: authUserId,
+>>>>>>> Stashed changes
         email: user.email,
         full_name: user.full_name,
         phone: user.phone || null,
@@ -172,3 +196,5 @@ export const seedUsers = async (req: Request, res: Response) => {
  
   return res.json({ total: users.length, results });
 };
+
+
