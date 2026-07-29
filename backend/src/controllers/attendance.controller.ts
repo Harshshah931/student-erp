@@ -41,7 +41,7 @@ export const getAttendanceById = async (req: Request, res: Response) => {
 export const createAttendance = async (req: Request, res: Response) => {
   try {
     const parsed = createAttendanceSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const { subject_id, faculty_id, date, semester, attendance_details } = parsed.data;
 
@@ -72,7 +72,7 @@ export const updateAttendance = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const parsed = updateAttendanceSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const { attendance_details } = parsed.data;
 

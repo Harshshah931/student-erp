@@ -33,7 +33,7 @@ export const getFacultyById = async (req: Request, res: Response) => {
 export const createFaculty = async (req: Request, res: Response) => {
   try {
     const parsed = createFacultySchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const { email, password, full_name, phone, employee_code, department_id, designation, joining_date } = parsed.data;
 
@@ -73,7 +73,7 @@ export const updateFaculty = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const parsed = updateFacultySchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const { full_name, phone, ...facultyFields } = parsed.data;
 
