@@ -54,7 +54,7 @@
       <span class="material-symbols-outlined">grade</span><span>Enter Marks</span>
     </a>
   </nav>
-  <div class="mt-auto border-t border-white/10 pt-4">
+  <div class="mt-auto border-t border-white/10 pt-4 space-y-1"><div class="px-4 py-2"><p class="text-sm font-bold text-white" id="admin-name">Loading...</p><p class="text-xs text-on-primary-container opacity-70" id="admin-role">User</p></div>
     <div class="px-4 py-2">
       <p class="text-sm font-bold text-white" id="faculty-name">Loading...</p>
       <p class="text-xs text-on-primary-container opacity-70">Faculty</p>
@@ -136,8 +136,10 @@
 </main>
 
 <script>
-  const API_URL = 'https://student-erp-backend-v7f3.onrender.com';
+  const API_URL = 'https://student-erp-production.up.railway.app';
   const token = localStorage.getItem('token');
+  const _u = JSON.parse(localStorage.getItem('user') || '{}');
+  if (_u && document.getElementById('admin-name')) { document.getElementById('admin-name').textContent = _u.full_name || 'User'; document.getElementById('admin-role').textContent = _u.roles?.name ? _u.roles.name.charAt(0).toUpperCase() + _u.roles.name.slice(1) : 'User'; }
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const role = user?.roles?.name;
