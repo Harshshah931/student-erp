@@ -20,7 +20,7 @@ export const getExams = async (req: Request, res: Response) => {
 export const createExam = async (req: Request, res: Response) => {
   try {
     const parsed = createExamSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
     const { data, error } = await supabase.from('exams').insert(parsed.data).select().single();
     if (error) return res.status(400).json({ error: error.message });
     return res.status(201).json(data);
@@ -33,7 +33,7 @@ export const uploadMarks = async (req: Request, res: Response) => {
   try {
     const { exam_id } = req.params;
     const parsed = uploadMarksSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const marksData = parsed.data.marks.map(m => ({
       exam_id,

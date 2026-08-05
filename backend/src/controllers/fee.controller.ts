@@ -35,7 +35,7 @@ export const getFeeById = async (req: Request, res: Response) => {
 export const createFee = async (req: Request, res: Response) => {
   try {
     const parsed = createFeeSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
     const { data, error } = await supabase.from('fees').insert(parsed.data).select().single();
     if (error) return res.status(400).json({ error: error.message });
     return res.status(201).json(data);
@@ -48,7 +48,7 @@ export const createPayment = async (req: Request, res: Response) => {
   try {
     const { fee_id } = req.params;
     const parsed = createPaymentSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const { data: payment, error } = await supabase
       .from('payments')

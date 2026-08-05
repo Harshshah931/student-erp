@@ -26,7 +26,7 @@ export const getDepartmentById = async (req: Request, res: Response) => {
 export const createDepartment = async (req: Request, res: Response) => {
   try {
     const parsed = createDepartmentSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const { data, error } = await supabase.from('departments').insert(parsed.data).select().single();
     if (error) return res.status(400).json({ error: error.message });
@@ -40,7 +40,7 @@ export const updateDepartment = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const parsed = updateDepartmentSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const { data, error } = await supabase.from('departments').update(parsed.data).eq('id', id).select().single();
     if (error) return res.status(400).json({ error: error.message });

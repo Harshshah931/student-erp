@@ -42,7 +42,7 @@ export const getStudentById = async (req: Request, res: Response) => {
 export const createStudent = async (req: Request, res: Response) => {
   try {
     const parsed = createStudentSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const { email, password, full_name, phone, enrollment_number, department_id, semester, batch_year, dob, gender, address, guardian_name, guardian_phone } = parsed.data;
 
@@ -91,7 +91,7 @@ export const updateStudent = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const parsed = updateStudentSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ error: parsed.error.errors });
+    if (!parsed.success) return res.status(400).json({ error: parsed.error.issues });
 
     const { full_name, phone, ...studentFields } = parsed.data;
 
