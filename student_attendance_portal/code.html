@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RSIT EduManage — My Attendance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--primary:#1a2f5e;--gold:#c9a84c;--gold-light:#f0d080;--danger:#dc2626;}
+body{font-family:'Inter',sans-serif;background:#f3f4f6;}
+.rsit-header{background:linear-gradient(135deg,#0a1628,#1a2f5e,#0a1628);border-bottom:3px solid var(--gold);padding:8px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:300;box-shadow:0 2px 16px rgba(0,0,0,0.4);}
+.rsit-logo{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#0a1628;flex-shrink:0;}
+.sidebar{width:240px;background:var(--primary);height:calc(100vh - 59px);position:fixed;left:0;top:59px;display:flex;flex-direction:column;padding:16px 12px;z-index:200;overflow-y:auto;}
+.sidebar-title{color:white;font-size:13px;font-weight:800;padding:4px 8px 14px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:10px;}
+.sidebar-title small{color:var(--gold);font-size:10px;display:block;letter-spacing:1px;}
+.nav-link{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.65);border-radius:10px;text-decoration:none;font-size:13px;font-weight:500;margin-bottom:2px;transition:all 0.2s;cursor:pointer;border:none;background:none;width:100%;}
+.nav-link:hover,.nav-link.active{background:rgba(201,168,76,0.2);color:white;}
+.nav-link .material-symbols-outlined{font-size:18px;}
+.about-box{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:12px;margin:8px 0;}
+.about-row{display:flex;flex-direction:column;margin-bottom:8px;}
+.about-label{color:rgba(255,255,255,0.5);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.about-val{color:white;font-size:12px;font-weight:600;margin-top:1px;}
+.nav-user{margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;}
+.main{margin-left:240px;min-height:calc(100vh - 59px);padding:24px;}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--primary);border-top:2px solid var(--gold);z-index:300;}
+.bottom-nav-inner{display:flex;justify-content:space-around;padding:6px 0 env(safe-area-inset-bottom,4px);}
+.bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;color:rgba(255,255,255,0.6);font-size:10px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.2s;}
+.bn-item.active,.bn-item:hover{color:var(--gold);}
+.bn-item .material-symbols-outlined{font-size:22px;}
+@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:14px;padding-bottom:80px;}.bottom-nav{display:block;}}
+.card{background:white;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.07);margin-bottom:20px;}
+.stat-card{background:white;border-radius:14px;padding:18px;box-shadow:0 1px 6px rgba(0,0,0,0.07);text-align:center;}
+.danger-alert{background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;}
+.subject-row{padding:14px 0;border-bottom:1px solid #f3f4f6;}
+.pct-bar-bg{height:10px;background:#f3f4f6;border-radius:99px;overflow:hidden;margin-top:6px;}
+.pct-bar-fill{height:100%;border-radius:99px;transition:width 0.6s ease;}
+</style>
+</head>
+<body>
+
+<header class="rsit-header">
+  <div class="rsit-logo">RS</div>
+  <div>
+    <div style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;">Rohit Sharma Institute of Technology</div>
+    <div style="color:white;font-size:13px;font-weight:800;">RSIT EduManage ERP &nbsp;<span style="color:var(--gold);font-size:10px;">★ INNOVATE · INSPIRE · EXCEL ★</span></div>
+  </div>
+</header>
+
+<aside class="sidebar">
+  <div class="sidebar-title">EduManage ERP <small>STUDENT PORTAL</small></div>
+  <nav>
+    <a class="nav-link" href="../my_marks_student_portal/code.html"><span class="material-symbols-outlined">grade</span>My Marks</a>
+    <a class="nav-link" href="../fee_status_student_portal/code.html"><span class="material-symbols-outlined">payments</span>Fee Status</a>
+    <a class="nav-link active" href="../student_attendance_portal/code.html"><span class="material-symbols-outlined">calendar_today</span>Attendance</a>
+  </nav>
+  <div style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:1px;margin:12px 0 6px;padding:0 4px;">MY PROFILE</div>
+  <div class="about-box">
+    <div class="about-row"><span class="about-label">Name</span><span class="about-val" id="s-name-disp">Loading...</span></div>
+    <div class="about-row"><span class="about-label">Enrollment No.</span><span class="about-val" id="s-enrollment-disp">--</span></div>
+    <div class="about-row"><span class="about-label">Department</span><span class="about-val" id="s-dept-disp">--</span></div>
+    <div class="about-row"><span class="about-label">Semester</span><span class="about-val" id="s-sem-disp">--</span></div>
+    <div class="about-row"><span class="about-label">Batch Year</span><span class="about-val" id="s-batch-disp">--</span></div>
+  </div>
+  <div class="nav-user">
+    <div style="padding:10px 12px;">
+      <div style="color:white;font-weight:700;font-size:13px;" id="admin-name">Loading...</div>
+      <div style="color:var(--gold);font-size:11px;">Student</div>
+    </div>
+    <button class="nav-link" onclick="logout()"><span class="material-symbols-outlined">logout</span>Logout</button>
+  </div>
+</aside>
+
+<main class="main">
+  <div style="font-size:20px;font-weight:900;color:var(--primary);margin-bottom:4px;">My Attendance</div>
+  <div style="font-size:13px;color:#6b7280;margin-bottom:20px;">Subject-wise attendance with 75% minimum requirement</div>
+
+  <!-- Low attendance alert -->
+  <div class="danger-alert" id="danger-alert" style="display:none;">
+    <span class="material-symbols-outlined" style="color:#dc2626;font-size:22px;flex-shrink:0;">warning</span>
+    <div>
+      <div style="font-weight:800;color:#dc2626;font-size:14px;">⚠️ Low Attendance Warning</div>
+      <div style="font-size:13px;color:#7f1d1d;margin-top:4px;" id="danger-subjects-text"></div>
+    </div>
+  </div>
+
+  <!-- Overall stat -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
+    <div class="stat-card" style="border-top:4px solid var(--gold);">
+      <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Overall %</div>
+      <div style="font-size:28px;font-weight:900;" id="overall-pct" >--</div>
+    </div>
+    <div class="stat-card" style="border-top:4px solid #16a34a;">
+      <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Total Present</div>
+      <div style="font-size:28px;font-weight:900;color:#16a34a;" id="total-present">--</div>
+    </div>
+    <div class="stat-card" style="border-top:4px solid #dc2626;">
+      <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Total Absent</div>
+      <div style="font-size:28px;font-weight:900;color:#dc2626;" id="total-absent">--</div>
+    </div>
+  </div>
+
+  <!-- Bar Chart -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+      <div style="font-weight:800;font-size:15px;color:var(--primary);">Attendance by Subject</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:#dc2626;font-weight:600;">
+        <div style="width:20px;height:2px;background:#dc2626;border-style:dashed;"></div>
+        75% Minimum Requirement
+      </div>
+    </div>
+    <canvas id="att-chart" style="max-height:280px;"></canvas>
+  </div>
+
+  <!-- Subject breakdown -->
+  <div class="card">
+    <div style="font-weight:800;font-size:15px;color:var(--primary);margin-bottom:16px;">Subject-wise Breakdown</div>
+    <div id="subject-list">
+      <div style="text-align:center;padding:40px;color:#9ca3af;">Loading attendance data...</div>
+    </div>
+  </div>
+</main>
+
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a class="bn-item" href="../my_marks_student_portal/code.html"><span class="material-symbols-outlined">grade</span>Marks</a>
+    <a class="bn-item" href="../fee_status_student_portal/code.html"><span class="material-symbols-outlined">payments</span>Fees</a>
+    <a class="bn-item active" href="../student_attendance_portal/code.html"><span class="material-symbols-outlined">calendar_today</span>Attendance</a>
+    <div class="bn-item" onclick="logout()"><span class="material-symbols-outlined">logout</span>Logout</div>
+  </div>
+</nav>
+
+<script>
+const API_URL = 'https://student-erp-production.up.railway.app';
+const token = localStorage.getItem('token');
+const _user = JSON.parse(localStorage.getItem('user') || '{}');
+if (!token) window.location.href = '../login_edumanage_erp/code.html';
+document.getElementById('admin-name').textContent = _user.full_name || 'Student';
+const headers = { 'Content-Type':'application/json', 'Authorization':'Bearer '+token };
+
+async function loadStudentProfile() {
+  try {
+    const res = await fetch(`${API_URL}/api/students`, { headers });
+    const all = await res.json();
+    const me = all.find(s => s.user_id === _user.id || s.users?.email === _user.email);
+    if (me) {
+      document.getElementById('s-name-disp').textContent = me.users?.full_name || _user.full_name || '--';
+      document.getElementById('s-enrollment-disp').textContent = me.enrollment_number || '--';
+      document.getElementById('s-dept-disp').textContent = me.departments?.name || '--';
+      document.getElementById('s-sem-disp').textContent = 'Semester ' + (me.semester || '--');
+      document.getElementById('s-batch-disp').textContent = me.batch_year || '--';
+    }
+  } catch(e) {}
+}
+
+async function loadAttendance() {
+  try {
+    const res = await fetch(`${API_URL}/api/attendance/my`, { headers });
+    if (!res.ok) throw new Error('Failed to load');
+    const data = await res.json();
+
+    // Group by subject
+    const bySubject = {};
+    data.forEach(rec => {
+      const subId = rec.attendance?.subject_id || rec.subject_id || 'Unknown';
+      const subName = rec.subject_name || subId;
+      if (!bySubject[subId]) bySubject[subId] = { name: subName, present: 0, absent: 0, total: 0 };
+      if (rec.status === 'present') bySubject[subId].present++;
+      else bySubject[subId].absent++;
+      bySubject[subId].total++;
+    });
+
+    const subjects = Object.values(bySubject);
+    if (!subjects.length) {
+      // Show demo data if no attendance yet
+      showDemoData();
+      return;
+    }
+
+    let totalPresent = 0, totalAbsent = 0;
+    const lowSubjects = [];
+    subjects.forEach(s => {
+      totalPresent += s.present;
+      totalAbsent += s.absent;
+      const pct = s.total ? Math.round((s.present/s.total)*100) : 0;
+      s.pct = pct;
+      if (pct < 75) lowSubjects.push(`${s.name} (${pct}%)`);
+    });
+
+    const totalClasses = totalPresent + totalAbsent;
+    const overallPct = totalClasses ? Math.round((totalPresent/totalClasses)*100) : 0;
+
+    document.getElementById('overall-pct').textContent = overallPct + '%';
+    document.getElementById('overall-pct').style.color = overallPct >= 75 ? '#16a34a' : '#dc2626';
+    document.getElementById('total-present').textContent = totalPresent;
+    document.getElementById('total-absent').textContent = totalAbsent;
+
+    if (lowSubjects.length) {
+      document.getElementById('danger-alert').style.display = 'flex';
+      document.getElementById('danger-subjects-text').textContent = 'Your attendance is below 75% in: ' + lowSubjects.join(', ') + '. You may be debarred from exams if attendance drops further.';
+    }
+
+    renderChart(subjects);
+    renderSubjectList(subjects);
+
+  } catch(e) {
+    showDemoData();
+  }
+}
+
+function showDemoData() {
+  // Show empty state
+  document.getElementById('subject-list').innerHTML = '<div style="text-align:center;padding:40px;color:#9ca3af;">No attendance records found yet.<br><span style="font-size:12px;">Your attendance will appear here once faculty marks it.</span></div>';
+  document.getElementById('overall-pct').textContent = 'N/A';
+  document.getElementById('total-present').textContent = '0';
+  document.getElementById('total-absent').textContent = '0';
+
+  // Show sample chart
+  const sampleSubjects = [
+    {name:'Data Structures',pct:88,present:22,absent:3,total:25},
+    {name:'Computer Networks',pct:72,present:18,absent:7,total:25},
+    {name:'DBMS',pct:96,present:24,absent:1,total:25},
+    {name:'Operating Systems',pct:64,present:16,absent:9,total:25},
+    {name:'Software Engg',pct:80,present:20,absent:5,total:25},
+  ];
+  renderChart(sampleSubjects);
+  renderSubjectList(sampleSubjects);
+
+  const low = sampleSubjects.filter(s=>s.pct<75);
+  if (low.length) {
+    document.getElementById('overall-pct').textContent = '80%';
+    document.getElementById('overall-pct').style.color = '#16a34a';
+    document.getElementById('total-present').textContent = '100';
+    document.getElementById('total-absent').textContent = '25';
+    document.getElementById('danger-alert').style.display = 'flex';
+    document.getElementById('danger-subjects-text').textContent = '⚠️ Sample data shown. Your attendance will appear here once faculty marks it.';
+  }
+}
+
+function renderChart(subjects) {
+  const ctx = document.getElementById('att-chart').getContext('2d');
+  const colors = subjects.map(s => s.pct >= 75 ? 'rgba(22,163,74,0.8)' : 'rgba(220,38,38,0.8)');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: subjects.map(s => s.name.length > 12 ? s.name.substring(0,12)+'...' : s.name),
+      datasets: [{
+        label: 'Attendance %',
+        data: subjects.map(s => s.pct),
+        backgroundColor: colors,
+        borderColor: colors.map(c => c.replace('0.8','1')),
+        borderWidth: 1,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        annotation: {},
+        tooltip: { callbacks: { label: ctx => `${ctx.raw}% attendance` } }
+      },
+      scales: {
+        y: {
+          min: 0, max: 100,
+          ticks: { callback: v => v + '%' },
+          grid: { color: '#f3f4f6' }
+        },
+        x: { grid: { display: false } }
+      }
+    },
+    plugins: [{
+      id: 'dangerLine',
+      afterDraw(chart) {
+        const { ctx, scales: { y, x } } = chart;
+        const yPos = y.getPixelForValue(75);
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = '#dc2626';
+        ctx.lineWidth = 2;
+        ctx.moveTo(x.left, yPos);
+        ctx.lineTo(x.right, yPos);
+        ctx.stroke();
+        ctx.fillStyle = '#dc2626';
+        ctx.font = 'bold 11px Inter';
+        ctx.fillText('75% Min', x.right - 60, yPos - 6);
+        ctx.restore();
+      }
+    }]
+  });
+}
+
+function renderSubjectList(subjects) {
+  const list = document.getElementById('subject-list');
+  list.innerHTML = subjects.map(s => {
+    const pct = s.pct;
+    const color = pct >= 75 ? '#16a34a' : '#dc2626';
+    const bgColor = pct >= 75 ? '#dcfce7' : '#fee2e2';
+    return `<div class="subject-row">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div>
+          <span style="font-weight:700;font-size:14px;color:#111827;">${s.name}</span>
+          ${pct < 75 ? '<span style="margin-left:8px;background:#fee2e2;color:#dc2626;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;">⚠️ LOW</span>' : ''}
+        </div>
+        <div style="display:flex;gap:16px;align-items:center;">
+          <span style="font-size:12px;color:#16a34a;">✓ ${s.present} Present</span>
+          <span style="font-size:12px;color:#dc2626;">✗ ${s.absent} Absent</span>
+          <span style="font-size:16px;font-weight:900;color:${color};">${pct}%</span>
+        </div>
+      </div>
+      <div class="pct-bar-bg">
+        <div class="pct-bar-fill" style="width:${pct}%;background:${color};"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;">
+        <span style="font-size:11px;color:#9ca3af;">${s.total} total classes</span>
+        <span style="font-size:11px;color:${pct<75?'#dc2626':'#6b7280'};">${pct<75?`Need ${Math.ceil(0.75*s.total)-s.present} more classes to reach 75%`:'✓ Good standing'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '../login_edumanage_erp/code.html'; }
+
+loadStudentProfile();
+loadAttendance();
+</script>
+</body>
+</html>

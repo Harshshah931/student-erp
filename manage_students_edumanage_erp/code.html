@@ -1,301 +1,252 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>EduManage ERP - Student Management</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        "colors": {
-          "surface-bright": "#f9f9ff",
-          "surface-container-low": "#f1f3ff",
-          "surface-container": "#e9edff",
-          "surface-container-high": "#e1e8fd",
-          "surface-container-lowest": "#ffffff",
-          "outline-variant": "#c4c6cf",
-          "outline": "#74777f",
-          "on-surface-variant": "#43474e",
-          "on-surface": "#141b2b",
-          "primary": "#022448",
-          "on-primary": "#ffffff",
-          "primary-container": "#1e3a5f",
-          "on-primary-container": "#8aa4cf",
-          "on-primary-fixed-variant": "#2d486d",
-          "secondary": "#0051d5",
-          "error": "#ba1a1a"
-        }
-      }
-    }
-  }
-</script>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RSIT EduManage — Student Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 <style>
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
-  body { background-color: #f9f9ff; font-family: 'Inter', sans-serif; }
-  .zebra-row:nth-child(even) { background-color: #EFF6FF; }
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--primary:#1a2f5e;--gold:#c9a84c;--gold-light:#f0d080;}
+body{font-family:'Inter',sans-serif;background:#f3f4f6;}
+.rsit-header{background:linear-gradient(135deg,#0a1628,#1a2f5e,#0a1628);border-bottom:3px solid var(--gold);padding:8px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:300;box-shadow:0 2px 16px rgba(0,0,0,0.4);}
+.rsit-logo{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#0a1628;flex-shrink:0;}
+.sidebar{width:240px;background:var(--primary);height:calc(100vh - 59px);position:fixed;left:0;top:59px;display:flex;flex-direction:column;padding:16px 12px;z-index:200;}
+.sidebar-title{color:white;font-size:13px;font-weight:800;padding:4px 8px 14px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:10px;}
+.sidebar-title small{color:var(--gold);font-size:10px;display:block;letter-spacing:1px;}
+.nav-link{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.65);border-radius:10px;text-decoration:none;font-size:13px;font-weight:500;margin-bottom:2px;transition:all 0.2s;cursor:pointer;border:none;background:none;width:100%;}
+.nav-link:hover,.nav-link.active{background:rgba(201,168,76,0.2);color:white;}
+.nav-link .material-symbols-outlined{font-size:18px;}
+.nav-user{margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;}
+.main{margin-left:240px;min-height:calc(100vh - 59px);padding:24px;}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--primary);border-top:2px solid var(--gold);z-index:300;}
+.bottom-nav-inner{display:flex;justify-content:space-around;padding:6px 0 env(safe-area-inset-bottom,4px);}
+.bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;color:rgba(255,255,255,0.6);font-size:10px;font-weight:500;cursor:pointer;text-decoration:none;border-radius:8px;transition:all 0.2s;}
+.bn-item.active,.bn-item:hover{color:var(--gold);}
+.bn-item .material-symbols-outlined{font-size:22px;}
+@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:14px;padding-bottom:80px;}.bottom-nav{display:block;}.hide-mobile{display:none;}}
+.card{background:white;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{background:var(--primary);color:white;padding:10px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;}
+td{padding:10px 14px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:middle;}
+tr:hover td{background:#f9fafb;}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#2a4a8e);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:11px;flex-shrink:0;}
+input,select{border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:13px;width:100%;outline:none;transition:border 0.2s;background:#f9fafb;}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,168,76,0.15);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:400;align-items:center;justify-content:center;padding:16px;}
+.modal-box{background:white;border-radius:16px;padding:28px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
 </style>
 </head>
-<body class="text-on-surface">
+<body>
 
-<aside class="flex flex-col h-screen fixed left-0 top-0 py-6 px-4 bg-primary w-64 z-50">
-  <div class="mb-10 px-2">
-    <h1 class="text-lg font-bold text-white">EduManage ERP</h1>
-    <p class="text-xs text-on-primary-container opacity-70 uppercase tracking-widest mt-1">Admin Portal</p>
+<header class="rsit-header">
+  <div class="rsit-logo">RS</div>
+  <div>
+    <div style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;">Rohit Sharma Institute of Technology</div>
+    <div style="color:white;font-size:13px;font-weight:800;">RSIT EduManage ERP &nbsp;<span style="color:var(--gold);font-size:10px;">★ INNOVATE · INSPIRE · EXCEL ★</span></div>
   </div>
-  <nav class="flex-1 space-y-1">
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-fixed-variant hover:text-white hover:bg-primary-container/20 rounded-lg transition-colors" href="../admin_dashboard_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">dashboard</span><span>Dashboard</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-container bg-primary-container rounded-lg font-bold" href="#">
-      <span class="material-symbols-outlined">school</span><span>Students</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-fixed-variant hover:text-white hover:bg-primary-container/20 rounded-lg transition-colors" href="../manage_faculty_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">badge</span><span>Faculty</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-fixed-variant hover:text-white hover:bg-primary-container/20 rounded-lg transition-colors" href="../fee_management_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">payments</span><span>Fees</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-fixed-variant hover:text-white hover:bg-primary-container/20 rounded-lg transition-colors" href="../mark_attendance_faculty_portal/code.html">
-      <span class="material-symbols-outlined">calendar_today</span><span>Attendance</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-fixed-variant hover:text-white hover:bg-primary-container/20 rounded-lg transition-colors" href="../enter_marks_faculty_portal/code.html">
-      <span class="material-symbols-outlined">grade</span><span>Marks</span>
-    </a>
+</header>
+
+<aside class="sidebar">
+  <div class="sidebar-title">EduManage ERP <small>ADMIN PORTAL</small></div>
+  <nav style="flex:1;">
+    <a class="nav-link" href="../admin_dashboard_edumanage_erp/code.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+    <a class="nav-link active" href="../manage_students_edumanage_erp/code.html"><span class="material-symbols-outlined">groups</span>Students</a>
+    <a class="nav-link" href="../manage_faculty_edumanage_erp/code.html"><span class="material-symbols-outlined">badge</span>Faculty</a>
+    <a class="nav-link" href="../fee_management_edumanage_erp/code.html"><span class="material-symbols-outlined">payments</span>Fees</a>
   </nav>
-  <div class="mt-auto border-t border-white/10 pt-4 space-y-1">
-    <div class="px-4 py-2">
-      <p class="text-sm font-bold text-white" id="admin-name">Loading...</p>
-      <p class="text-xs text-on-primary-container opacity-70" id="admin-role">User</p>
+  <div class="nav-user">
+    <div style="padding:10px 12px;">
+      <div style="color:white;font-weight:700;font-size:13px;" id="admin-name">Loading...</div>
+      <div style="color:var(--gold);font-size:11px;" id="admin-role">Administrator</div>
     </div>
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-fixed-variant hover:text-white hover:bg-primary-container/20 rounded-lg transition-colors cursor-pointer" onclick="logout()">
-      <span class="material-symbols-outlined">logout</span><span>Logout</span>
-    </a>
+    <button class="nav-link" onclick="logout()"><span class="material-symbols-outlined">logout</span>Logout</button>
   </div>
 </aside>
 
-<main class="ml-64 min-h-screen">
-  <header class="flex justify-between items-center w-full px-6 h-16 sticky top-0 bg-surface-bright border-b border-outline-variant z-40">
-  <h2 class="text-xl font-bold text-primary">Student Management</h2>
-</header>
+<main class="main">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px;">
+    <div>
+      <div style="font-size:20px;font-weight:900;color:var(--primary);">Student Management</div>
+      <div style="font-size:13px;color:#6b7280;">Manage all enrolled students</div>
+    </div>
+    <button onclick="openAddModal()" style="background:var(--gold);color:#0a1628;border:none;padding:10px 20px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;">
+      <span class="material-symbols-outlined" style="font-size:18px;">person_add</span>Add Student
+    </button>
+  </div>
 
-  <div class="p-6 max-w-[1280px]">
-    <!-- Search -->
-    <div class="mb-4 relative w-full max-w-md">
-      <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
-      <input class="w-full pl-10 pr-4 py-2 bg-white border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" 
-             placeholder="Search by enrollment number..." type="text" id="search-input" oninput="searchStudents()"/>
+  <div class="card">
+    <!-- Search — autocomplete=off fixes the email autofill bug -->
+    <div style="position:relative;margin-bottom:16px;">
+      <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:18px;">search</span>
+      <input id="search-input" type="text" autocomplete="off" placeholder="Search by name or enrollment number..."
+        oninput="searchStudents()" style="padding-left:40px;"/>
     </div>
 
-    <!-- Table -->
-    <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
-      <div class="overflow-x-auto">
-        <table class="w-full text-left">
-          <thead class="bg-primary text-white">
-            <tr>
-              <th class="px-6 py-3 text-xs font-semibold uppercase">Name</th>
-              <th class="px-6 py-3 text-xs font-semibold uppercase">Enrollment</th>
-              <th class="px-6 py-3 text-xs font-semibold uppercase">Department</th>
-              <th class="px-6 py-3 text-xs font-semibold uppercase">Semester</th>
-              <th class="px-6 py-3 text-xs font-semibold uppercase">Batch</th>
-              <th class="px-6 py-3 text-xs font-semibold uppercase text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="students-table">
-            <tr><td colspan="6" class="px-6 py-8 text-center text-on-surface-variant">Loading students...</td></tr>
-          </tbody>
-        </table>
-      </div>
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th class="hide-mobile">Enrollment</th>
+            <th>Department</th>
+            <th class="hide-mobile">Semester</th>
+            <th class="hide-mobile">Batch</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="students-table">
+          <tr><td colspan="6" style="text-align:center;padding:40px;color:#9ca3af;">Loading students...</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </main>
 
 <!-- Add Student Modal -->
-<div id="add-modal" class="fixed inset-0 bg-black/50 z-[100] hidden items-center justify-center">
-  <div class="bg-white rounded-xl p-6 w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
-    <h3 class="text-lg font-bold text-primary mb-4">Add New Student</h3>
-    
-    <div id="modal-error" class="hidden mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"></div>
-
-    <div class="space-y-3">
-      <input id="s-name" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" placeholder="Full Name" type="text"/>
-      <input id="s-email" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" placeholder="Email" type="email"/>
-      <input id="s-password" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" placeholder="Password" type="password"/>
-      <input id="s-enrollment" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" placeholder="Enrollment Number" type="text"/>
-      <input id="s-phone" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" placeholder="Phone (optional)" type="text"/>
-      <select id="s-department" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20">
-        <option value="">Select Department</option>
-      </select>
-      <input id="s-semester" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" placeholder="Semester (1-8)" type="number" min="1" max="8"/>
-      <input id="s-batch" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" placeholder="Batch Year (e.g. 2022)" type="number"/>
-      <select id="s-gender" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20">
+<div class="modal-overlay" id="add-modal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div style="font-weight:800;font-size:16px;color:var(--primary);">Add New Student</div>
+      <button onclick="closeAddModal()" style="background:none;border:none;cursor:pointer;color:#9ca3af;"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div id="modal-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px;border-radius:8px;font-size:13px;margin-bottom:12px;"></div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <input id="s-name" placeholder="Full Name" type="text" autocomplete="off"/>
+      <input id="s-email" placeholder="Email" type="email" autocomplete="off"/>
+      <input id="s-password" placeholder="Password" type="password" autocomplete="new-password"/>
+      <input id="s-enrollment" placeholder="Enrollment Number (MU PRN)" type="text" autocomplete="off"/>
+      <input id="s-phone" placeholder="Phone (optional)" type="tel" autocomplete="off"/>
+      <select id="s-department"><option value="">Select Department</option></select>
+      <input id="s-semester" placeholder="Semester (1-8)" type="number" min="1" max="8" autocomplete="off"/>
+      <input id="s-batch" placeholder="Batch Year (e.g. 2024)" type="number" autocomplete="off"/>
+      <select id="s-gender">
         <option value="">Select Gender (optional)</option>
         <option value="male">Male</option>
         <option value="female">Female</option>
         <option value="other">Other</option>
       </select>
     </div>
-
-    <div class="flex gap-3 mt-6">
-      <button onclick="closeAddModal()" class="flex-1 px-4 py-2 border border-outline-variant rounded-lg text-sm font-semibold hover:bg-surface-container-low">Cancel</button>
-      <button onclick="addStudent()" id="add-btn" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:opacity-90">Add Student</button>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button onclick="closeAddModal()" style="flex:1;border:1.5px solid #e5e7eb;background:white;padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;">Cancel</button>
+      <button onclick="addStudent()" id="add-btn" style="flex:1;background:var(--primary);color:white;border:none;padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;">Add Student</button>
     </div>
   </div>
 </div>
 
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a class="bn-item" href="../admin_dashboard_edumanage_erp/code.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+    <a class="bn-item active" href="../manage_students_edumanage_erp/code.html"><span class="material-symbols-outlined">groups</span>Students</a>
+    <a class="bn-item" href="../manage_faculty_edumanage_erp/code.html"><span class="material-symbols-outlined">badge</span>Faculty</a>
+    <a class="bn-item" href="../fee_management_edumanage_erp/code.html"><span class="material-symbols-outlined">payments</span>Fees</a>
+    <div class="bn-item" onclick="logout()"><span class="material-symbols-outlined">logout</span>Logout</div>
+  </div>
+</nav>
+
 <script>
-  const API_URL = 'https://student-erp-production.up.railway.app';
-  const token = localStorage.getItem('token');
-  const _u = JSON.parse(localStorage.getItem('user') || '{}');
-  if (_u && document.getElementById('admin-name')) { document.getElementById('admin-name').textContent = _u.full_name || 'User'; document.getElementById('admin-role').textContent = _u.roles?.name ? _u.roles.name.charAt(0).toUpperCase() + _u.roles.name.slice(1) : 'User'; }
+const API_URL = 'https://student-erp-production.up.railway.app';
+const token = localStorage.getItem('token');
+const _user = JSON.parse(localStorage.getItem('user') || '{}');
+if (!token) window.location.href = '../login_edumanage_erp/code.html';
+document.getElementById('admin-name').textContent = _user.full_name || 'Admin';
+document.getElementById('admin-role').textContent = _user.roles?.name ? _user.roles.name.charAt(0).toUpperCase() + _user.roles.name.slice(1) : 'Administrator';
+const headers = { 'Content-Type':'application/json', 'Authorization':'Bearer '+token };
+let allStudents = [];
 
-  if (!token) window.location.href = '../login_edumanage_erp/code.html';
-
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`
-  };
-
-  let allStudents = [];
-
-  async function loadStudents() {
-    try {
-      const res = await fetch(`${API_URL}/api/students`, { headers });
-      allStudents = await res.json();
-      renderStudents(allStudents);
-    } catch (err) {
-      document.getElementById('students-table').innerHTML =
-        '<tr><td colspan="6" class="px-6 py-8 text-center text-error">Failed to load students</td></tr>';
-    }
+async function loadStudents() {
+  try {
+    const res = await fetch(`${API_URL}/api/students`, { headers });
+    allStudents = await res.json();
+    renderStudents(allStudents);
+  } catch(e) {
+    document.getElementById('students-table').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#dc2626;">Failed to load students</td></tr>';
   }
+}
 
-  function renderStudents(students) {
-    const tbody = document.getElementById('students-table');
-    if (!students.length) {
-      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-on-surface-variant">No students found</td></tr>';
-      return;
-    }
-    tbody.innerHTML = students.map(s => `
-      <tr class="zebra-row border-b border-outline-variant/30 hover:bg-primary/5 transition-colors">
-        <td class="px-6 py-3">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-primary font-bold text-xs">
-              ${(s.users?.full_name || 'NA').split(' ').map(n=>n[0]).join('').slice(0,2)}
-            </div>
-            <div>
-              <p class="font-bold text-primary">${s.users?.full_name || 'N/A'}</p>
-              <p class="text-xs text-on-surface-variant">${s.users?.email || ''}</p>
-            </div>
+function renderStudents(students) {
+  const tbody = document.getElementById('students-table');
+  if (!students.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#9ca3af;">No students found</td></tr>'; return; }
+  tbody.innerHTML = students.map(s => {
+    const name = s.users?.full_name || 'N/A';
+    const initials = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    return `<tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="avatar">${initials}</div>
+          <div>
+            <div style="font-weight:700;color:var(--primary);">${name}</div>
+            <div style="font-size:11px;color:#9ca3af;">${s.users?.email || ''}</div>
           </div>
-        </td>
-        <td class="px-6 py-3 font-mono text-on-surface-variant">${s.enrollment_number}</td>
-        <td class="px-6 py-3">${s.departments?.name || 'N/A'}</td>
-        <td class="px-6 py-3">Sem ${s.semester}</td>
-        <td class="px-6 py-3">${s.batch_year}</td>
-        <td class="px-6 py-3 text-right">
-          <button onclick="deleteStudent('${s.id}')" class="p-1.5 text-error hover:bg-red-50 rounded transition-colors">
-            <span class="material-symbols-outlined text-lg">delete</span>
-          </button>
-        </td>
-      </tr>
-    `).join('');
-  }
+        </div>
+      </td>
+      <td class="hide-mobile" style="font-family:monospace;font-size:12px;color:#6b7280;">${s.enrollment_number}</td>
+      <td>${s.departments?.name || 'N/A'}</td>
+      <td class="hide-mobile">Sem ${s.semester}</td>
+      <td class="hide-mobile">${s.batch_year}</td>
+      <td>
+        <button onclick="deleteStudent('${s.id}')" style="background:#fef2f2;border:none;color:#dc2626;padding:6px;border-radius:8px;cursor:pointer;">
+          <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
 
-  function searchStudents() {
-    const q = document.getElementById('search-input').value.toLowerCase();
-    const filtered = allStudents.filter(s =>
-      s.enrollment_number.toLowerCase().includes(q) ||
-      (s.users?.full_name || '').toLowerCase().includes(q)
-    );
-    renderStudents(filtered);
-  }
+function searchStudents() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  renderStudents(allStudents.filter(s =>
+    s.enrollment_number?.toLowerCase().includes(q) ||
+    (s.users?.full_name || '').toLowerCase().includes(q)
+  ));
+}
 
-  async function loadDepartments() {
-    try {
-      const res = await fetch(`${API_URL}/api/departments`, { headers });
-      const depts = await res.json();
-      const select = document.getElementById('s-department');
-      depts.forEach(d => {
-        const opt = document.createElement('option');
-        opt.value = d.id;
-        opt.textContent = d.name;
-        select.appendChild(opt);
-      });
-    } catch (err) {}
-  }
+async function loadDepartments() {
+  try {
+    const res = await fetch(`${API_URL}/api/departments`, { headers });
+    const depts = await res.json();
+    const sel = document.getElementById('s-department');
+    depts.forEach(d => { const o = document.createElement('option'); o.value = d.id; o.textContent = d.name; sel.appendChild(o); });
+  } catch(e) {}
+}
 
-  function openAddModal() {
-    document.getElementById('add-modal').classList.remove('hidden');
-    document.getElementById('add-modal').classList.add('flex');
-  }
+function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
+function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; document.getElementById('modal-error').style.display = 'none'; }
 
-  function closeAddModal() {
-    document.getElementById('add-modal').classList.add('hidden');
-    document.getElementById('add-modal').classList.remove('flex');
-    document.getElementById('modal-error').classList.add('hidden');
-  }
+async function addStudent() {
+  const btn = document.getElementById('add-btn');
+  const errDiv = document.getElementById('modal-error');
+  const body = {
+    full_name: document.getElementById('s-name').value,
+    email: document.getElementById('s-email').value,
+    password: document.getElementById('s-password').value,
+    enrollment_number: document.getElementById('s-enrollment').value,
+    phone: document.getElementById('s-phone').value,
+    department_id: document.getElementById('s-department').value,
+    semester: parseInt(document.getElementById('s-semester').value),
+    batch_year: parseInt(document.getElementById('s-batch').value),
+    gender: document.getElementById('s-gender').value || undefined,
+  };
+  btn.disabled = true; btn.textContent = 'Adding...'; errDiv.style.display = 'none';
+  try {
+    const res = await fetch(`${API_URL}/api/students`, { method:'POST', headers, body:JSON.stringify(body) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(JSON.stringify(data.error));
+    closeAddModal(); loadStudents();
+  } catch(e) { errDiv.textContent = 'Error: '+e.message; errDiv.style.display = 'block'; }
+  finally { btn.disabled = false; btn.textContent = 'Add Student'; }
+}
 
-  async function addStudent() {
-    const btn = document.getElementById('add-btn');
-    const errorDiv = document.getElementById('modal-error');
-    
-    const body = {
-      full_name: document.getElementById('s-name').value,
-      email: document.getElementById('s-email').value,
-      password: document.getElementById('s-password').value,
-      enrollment_number: document.getElementById('s-enrollment').value,
-      phone: document.getElementById('s-phone').value,
-      department_id: document.getElementById('s-department').value,
-      semester: parseInt(document.getElementById('s-semester').value),
-      batch_year: parseInt(document.getElementById('s-batch').value),
-      gender: document.getElementById('s-gender').value || undefined,
-    };
+async function deleteStudent(id) {
+  if (!confirm('Delete this student permanently?')) return;
+  try { await fetch(`${API_URL}/api/students/${id}`, { method:'DELETE', headers }); loadStudents(); }
+  catch(e) { alert('Failed to delete student'); }
+}
 
-    btn.disabled = true;
-    btn.textContent = 'Adding...';
-    errorDiv.classList.add('hidden');
+function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '../login_edumanage_erp/code.html'; }
 
-    try {
-      const res = await fetch(`${API_URL}/api/students`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(body)
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(JSON.stringify(data.error));
-      closeAddModal();
-      loadStudents();
-    } catch (err) {
-      errorDiv.textContent = 'Error: ' + err.message;
-      errorDiv.classList.remove('hidden');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Add Student';
-    }
-  }
-
-  async function deleteStudent(id) {
-    if (!confirm('Are you sure you want to delete this student?')) return;
-    try {
-      await fetch(`${API_URL}/api/students/${id}`, { method: 'DELETE', headers });
-      loadStudents();
-    } catch (err) {
-      alert('Failed to delete student');
-    }
-  }
-
-  function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '../login_edumanage_erp/code.html';
-  }
-
-  loadStudents();
-  loadDepartments();
+loadStudents(); loadDepartments();
 </script>
 </body>
 </html>

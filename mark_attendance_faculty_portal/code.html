@@ -1,277 +1,297 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
+<html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>EduManage ERP - Mark Attendance</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        "colors": {
-          "surface-bright": "#f9f9ff",
-          "surface-container-low": "#f1f3ff",
-          "surface-container": "#e9edff",
-          "surface-container-lowest": "#ffffff",
-          "outline-variant": "#c4c6cf",
-          "outline": "#74777f",
-          "on-surface-variant": "#43474e",
-          "on-surface": "#141b2b",
-          "primary": "#022448",
-          "on-primary": "#ffffff",
-          "primary-container": "#1e3a5f",
-          "on-primary-container": "#8aa4cf",
-          "on-primary-fixed-variant": "#2d486d",
-          "secondary": "#0051d5",
-          "error": "#ba1a1a"
-        }
-      }
-    }
-  }
-</script>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RSIT EduManage — Mark Attendance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 <style>
-  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
-  body { background-color: #f9f9ff; font-family: 'Inter', sans-serif; }
-  .zebra-row:nth-child(even) { background-color: #EFF6FF; }
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--primary:#1a2f5e;--gold:#c9a84c;--gold-light:#f0d080;}
+body{font-family:'Inter',sans-serif;background:#f3f4f6;}
+.rsit-header{background:linear-gradient(135deg,#0a1628,#1a2f5e,#0a1628);border-bottom:3px solid var(--gold);padding:8px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:300;box-shadow:0 2px 16px rgba(0,0,0,0.4);}
+.rsit-logo{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#0a1628;flex-shrink:0;}
+.sidebar{width:240px;background:var(--primary);height:calc(100vh - 59px);position:fixed;left:0;top:59px;display:flex;flex-direction:column;padding:16px 12px;z-index:200;}
+.sidebar-title{color:white;font-size:13px;font-weight:800;padding:4px 8px 14px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:10px;}
+.sidebar-title small{color:var(--gold);font-size:10px;display:block;letter-spacing:1px;}
+.nav-link{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.65);border-radius:10px;text-decoration:none;font-size:13px;font-weight:500;margin-bottom:2px;transition:all 0.2s;cursor:pointer;border:none;background:none;width:100%;}
+.nav-link:hover,.nav-link.active{background:rgba(201,168,76,0.2);color:white;}
+.nav-link .material-symbols-outlined{font-size:18px;}
+.about-box{margin:12px 0;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:10px;padding:12px;}
+.nav-user{margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;}
+.main{margin-left:240px;min-height:calc(100vh - 59px);padding:24px;}
+.bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--primary);border-top:2px solid var(--gold);z-index:300;}
+.bottom-nav-inner{display:flex;justify-content:space-around;padding:6px 0 env(safe-area-inset-bottom,4px);}
+.bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;color:rgba(255,255,255,0.6);font-size:10px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.2s;}
+.bn-item.active,.bn-item:hover{color:var(--gold);}
+.bn-item .material-symbols-outlined{font-size:22px;}
+@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:14px;padding-bottom:80px;}.bottom-nav{display:block;}}
+.card{background:white;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.07);margin-bottom:20px;}
+select,input{border:1.5px solid #e5e7eb;border-radius:8px;padding:10px 12px;font-size:13px;width:100%;outline:none;transition:border 0.2s;background:#f9fafb;}
+select:focus,input:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,168,76,0.15);}
+select:disabled{opacity:0.5;cursor:not-allowed;}
+.step-label{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.att-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #f3f4f6;}
+.att-row:hover{background:#f9fafb;}
+.toggle-btn{padding:7px 16px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-present{background:#dcfce7;color:#16a34a;}
+.btn-absent{background:#fee2e2;color:#dc2626;}
 </style>
 </head>
-<body class="text-on-surface">
+<body>
 
-<aside class="flex flex-col h-screen fixed left-0 top-0 py-6 px-4 bg-primary w-64 z-50">
-  <div class="mb-10 px-2">
-    <h1 class="text-lg font-bold text-white">EduManage ERP</h1>
-    <p class="text-xs text-on-primary-container opacity-70 uppercase tracking-widest mt-1">Faculty Portal</p>
+<header class="rsit-header">
+  <div class="rsit-logo">RS</div>
+  <div>
+    <div style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;">Rohit Sharma Institute of Technology</div>
+    <div style="color:white;font-size:13px;font-weight:800;">RSIT EduManage ERP &nbsp;<span style="color:var(--gold);font-size:10px;">★ INNOVATE · INSPIRE · EXCEL ★</span></div>
   </div>
-  <nav class="flex-1 space-y-1">
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-container bg-primary-container rounded-lg font-bold" href="#">
-      <span class="material-symbols-outlined">calendar_today</span><span>Attendance</span>
-    </a>
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-fixed-variant hover:text-white hover:bg-primary-container/20 rounded-lg transition-colors" href="../enter_marks_faculty_portal/code.html">
-      <span class="material-symbols-outlined">grade</span><span>Enter Marks</span>
-    </a>
+</header>
+
+<aside class="sidebar">
+  <div class="sidebar-title">EduManage ERP <small>FACULTY PORTAL</small></div>
+  <nav>
+    <a class="nav-link active" href="../mark_attendance_faculty_portal/code.html"><span class="material-symbols-outlined">calendar_today</span>Attendance</a>
+    <a class="nav-link" href="../enter_marks_faculty_portal/code.html"><span class="material-symbols-outlined">grade</span>Enter Marks</a>
+    <a class="nav-link" href="../class_report_faculty_portal/code.html"><span class="material-symbols-outlined">assessment</span>Class Report</a>
   </nav>
-  <div class="mt-auto border-t border-white/10 pt-4 space-y-1"><div class="px-4 py-2"><p class="text-sm font-bold text-white" id="admin-name">Loading...</p><p class="text-xs text-on-primary-container opacity-70" id="admin-role">User</p></div>
-    <div class="px-4 py-2">
-      <p class="text-sm font-bold text-white" id="faculty-name">Loading...</p>
-      <p class="text-xs text-on-primary-container opacity-70">Faculty</p>
+  <!-- About Me -->
+  <div class="about-box">
+    <div style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:8px;">MY PROFILE</div>
+    <div style="color:white;font-weight:700;font-size:13px;" id="f-name-display">Loading...</div>
+    <div style="color:rgba(255,255,255,0.6);font-size:11px;margin-top:2px;" id="f-dept-display">--</div>
+    <div style="color:rgba(255,255,255,0.6);font-size:11px;margin-top:2px;" id="f-desig-display">--</div>
+    <div style="color:rgba(255,255,255,0.5);font-size:10px;margin-top:6px;font-family:monospace;" id="f-code-display">--</div>
+  </div>
+  <div class="nav-user">
+    <div style="padding:10px 12px;">
+      <div style="color:white;font-weight:700;font-size:13px;" id="admin-name">Loading...</div>
+      <div style="color:var(--gold);font-size:11px;">Faculty</div>
     </div>
-    <a class="flex items-center gap-4 px-4 py-2 text-on-primary-fixed-variant hover:text-white hover:bg-primary-container/20 rounded-lg transition-colors cursor-pointer" onclick="logout()">
-      <span class="material-symbols-outlined">logout</span><span>Logout</span>
-    </a>
+    <button class="nav-link" onclick="logout()"><span class="material-symbols-outlined">logout</span>Logout</button>
   </div>
 </aside>
 
-<main class="ml-64 min-h-screen">
-  <header class="flex justify-between items-center w-full px-6 h-16 sticky top-0 bg-surface-bright border-b border-outline-variant z-40">
-    <h2 class="text-xl font-bold text-primary">Mark Attendance</h2>
-  </header>
+<main class="main">
+  <div style="font-size:20px;font-weight:900;color:var(--primary);margin-bottom:4px;">Mark Attendance</div>
+  <div style="font-size:13px;color:#6b7280;margin-bottom:20px;">Select class details — no UUID required</div>
 
-  <div class="p-6 max-w-[1280px]">
-
-    <!-- Controls -->
-    <div class="bg-white border border-outline-variant rounded-xl p-4 mb-6">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label class="block text-xs font-semibold text-on-surface-variant uppercase mb-1">Subject ID</label>
-          <input id="subject-id" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" placeholder="Enter Subject ID (UUID)"/>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-on-surface-variant uppercase mb-1">Date</label>
-          <input id="attendance-date" type="date" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20"/>
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-on-surface-variant uppercase mb-1">Semester</label>
-          <input id="semester" type="number" min="1" max="8" class="w-full px-4 py-2 border border-outline-variant rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-secondary/20" placeholder="1-8"/>
-        </div>
+  <!-- Step 1: Smart Dropdowns -->
+  <div class="card">
+    <div style="font-weight:800;font-size:15px;color:var(--primary);margin-bottom:16px;">Step 1 — Select Class</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:16px;">
+      <div>
+        <div class="step-label">Semester</div>
+        <select id="sel-semester" onchange="onSemesterChange()">
+          <option value="">Select Semester</option>
+          <option value="1">Semester 1</option><option value="2">Semester 2</option>
+          <option value="3">Semester 3</option><option value="4">Semester 4</option>
+          <option value="5">Semester 5</option><option value="6">Semester 6</option>
+          <option value="7">Semester 7</option><option value="8">Semester 8</option>
+        </select>
       </div>
-      <button onclick="loadStudents()" class="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:opacity-90">
-        Load Students
+      <div>
+        <div class="step-label">Department</div>
+        <select id="sel-dept" onchange="onDeptChange()" disabled>
+          <option value="">Select Department</option>
+        </select>
+      </div>
+      <div>
+        <div class="step-label">Subject</div>
+        <select id="sel-subject" disabled>
+          <option value="">Select Subject</option>
+        </select>
+      </div>
+      <div>
+        <div class="step-label">Date</div>
+        <input type="date" id="att-date"/>
+      </div>
+    </div>
+    <button onclick="loadStudents()" style="background:var(--primary);color:white;border:none;padding:10px 24px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;">
+      <span class="material-symbols-outlined" style="font-size:18px;">group</span>Load Students
+    </button>
+  </div>
+
+  <!-- Step 2: Mark Attendance -->
+  <div class="card" id="attendance-section" style="display:none;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div style="font-weight:800;font-size:15px;color:var(--primary);">Step 2 — Mark Attendance</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="markAll('present')" style="background:#dcfce7;color:#16a34a;border:none;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">✓ All Present</button>
+        <button onclick="markAll('absent')" style="background:#fee2e2;color:#dc2626;border:none;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">✗ All Absent</button>
+      </div>
+    </div>
+    <div id="students-att-list"></div>
+    <div style="margin-top:16px;text-align:right;">
+      <button onclick="submitAttendance()" id="submit-btn" style="background:var(--gold);color:#0a1628;border:none;padding:11px 28px;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px;">
+        Submit Attendance
       </button>
     </div>
-
-    <!-- Stats -->
-    <div class="grid grid-cols-3 gap-4 mb-6 hidden" id="stats-row">
-      <div class="bg-white border border-outline-variant rounded-xl p-4">
-        <p class="text-xs text-on-surface-variant uppercase font-semibold">Total</p>
-        <p class="text-2xl font-bold text-primary" id="total-count">0</p>
-      </div>
-      <div class="bg-white border border-outline-variant rounded-xl p-4">
-        <p class="text-xs text-on-surface-variant uppercase font-semibold">Present</p>
-        <p class="text-2xl font-bold text-green-700" id="present-count">0</p>
-      </div>
-      <div class="bg-white border border-outline-variant rounded-xl p-4">
-        <p class="text-xs text-on-surface-variant uppercase font-semibold">Absent</p>
-        <p class="text-2xl font-bold text-error" id="absent-count">0</p>
-      </div>
-    </div>
-
-    <!-- Students Table -->
-    <div id="students-section" class="hidden">
-      <div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm mb-4">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left">
-            <thead class="bg-primary text-white">
-              <tr>
-                <th class="px-6 py-3 text-xs font-semibold uppercase">Roll No</th>
-                <th class="px-6 py-3 text-xs font-semibold uppercase">Name</th>
-                <th class="px-6 py-3 text-xs font-semibold uppercase">Status</th>
-                <th class="px-6 py-3 text-xs font-semibold uppercase text-center">Present</th>
-              </tr>
-            </thead>
-            <tbody id="attendance-table"></tbody>
-          </table>
-        </div>
-      </div>
-      <button onclick="submitAttendance()" id="submit-btn" class="w-full bg-primary text-white py-3 rounded-lg font-bold hover:opacity-90 flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined">save</span> Submit Attendance
-      </button>
-    </div>
-
-    <div id="message-box" class="hidden mt-4 p-4 rounded-lg text-sm font-semibold"></div>
   </div>
 </main>
 
+<nav class="bottom-nav">
+  <div class="bottom-nav-inner">
+    <a class="bn-item active" href="../mark_attendance_faculty_portal/code.html"><span class="material-symbols-outlined">calendar_today</span>Attendance</a>
+    <a class="bn-item" href="../enter_marks_faculty_portal/code.html"><span class="material-symbols-outlined">grade</span>Marks</a>
+    <a class="bn-item" href="../class_report_faculty_portal/code.html"><span class="material-symbols-outlined">assessment</span>Report</a>
+    <div class="bn-item" onclick="logout()"><span class="material-symbols-outlined">logout</span>Logout</div>
+  </div>
+</nav>
+
 <script>
-  const API_URL = 'https://student-erp-production.up.railway.app';
-  const token = localStorage.getItem('token');
-  const _u = JSON.parse(localStorage.getItem('user') || '{}');
-  if (_u && document.getElementById('admin-name')) { document.getElementById('admin-name').textContent = _u.full_name || 'User'; document.getElementById('admin-role').textContent = _u.roles?.name ? _u.roles.name.charAt(0).toUpperCase() + _u.roles.name.slice(1) : 'User'; }
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
+const API_URL = 'https://student-erp-production.up.railway.app';
+const token = localStorage.getItem('token');
+const _user = JSON.parse(localStorage.getItem('user') || '{}');
+if (!token) window.location.href = '../login_edumanage_erp/code.html';
 
-  const role = user?.roles?.name;
+// Set today's date
+document.getElementById('att-date').value = new Date().toISOString().split('T')[0];
 
-  if (!token || role !== 'faculty') {
-    alert('Access denied. Faculty only.');
-    window.location.href = '../login_edumanage_erp/code.html';
-  }
+// Set user info — only once, fixes duplicate name bug
+document.getElementById('admin-name').textContent = _user.full_name || 'Faculty';
+document.getElementById('f-name-display').textContent = _user.full_name || '--';
 
-  document.getElementById('faculty-name').textContent = user.full_name || 'Faculty';
+const headers = { 'Content-Type':'application/json', 'Authorization':'Bearer '+token };
+let allDepts = [], studentsData = [], attendanceMap = {};
 
-  // Set today's date
-  document.getElementById('attendance-date').value = new Date().toISOString().split('T')[0];
+// Load faculty profile details
+async function loadFacultyProfile() {
+  try {
+    const res = await fetch(`${API_URL}/api/faculty`, { headers });
+    const all = await res.json();
+    const me = all.find(f => f.users?.email === _user.email || f.user_id === _user.id);
+    if (me) {
+      document.getElementById('f-dept-display').textContent = me.departments?.name || '--';
+      document.getElementById('f-desig-display').textContent = me.designation || '--';
+      document.getElementById('f-code-display').textContent = 'Code: ' + (me.employee_code || '--');
+    }
+  } catch(e) {}
+}
 
-  const headers = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
-  let students = [];
+async function loadDepts() {
+  try {
+    const res = await fetch(`${API_URL}/api/departments`, { headers });
+    allDepts = await res.json();
+    const sel = document.getElementById('sel-dept');
+    allDepts.forEach(d => { const o = document.createElement('option'); o.value = d.id; o.textContent = d.name; sel.appendChild(o); });
+  } catch(e) {}
+}
 
-  async function loadStudents() {
-    const semester = document.getElementById('semester').value;
-    if (!semester) { showMessage('Please enter a semester', 'error'); return; }
+function onSemesterChange() {
+  const dept = document.getElementById('sel-dept');
+  dept.disabled = !document.getElementById('sel-semester').value;
+  document.getElementById('sel-subject').disabled = true;
+  document.getElementById('sel-subject').innerHTML = '<option value="">Select Subject</option>';
+}
 
+async function onDeptChange() {
+  const deptId = document.getElementById('sel-dept').value;
+  const subSel = document.getElementById('sel-subject');
+  subSel.innerHTML = '<option value="">Loading subjects...</option>';
+  subSel.disabled = true;
+  if (!deptId) return;
+  try {
+    const res = await fetch(`${API_URL}/api/departments`, { headers });
+    // We'll get subjects by calling a subjects endpoint or filtering
+    // For now load subjects based on dept from API
+    const subRes = await fetch(`${API_URL}/api/students?department_id=${deptId}`, { headers });
+    // Load subjects from departments
+    subSel.innerHTML = '<option value="">Select Subject</option>';
+    // Try subjects endpoint
     try {
-      const res = await fetch(`${API_URL}/api/students?semester=${semester}`, { headers });
-      students = await res.json();
-
-      if (!students.length) {
-        showMessage('No students found for this semester', 'error');
+      const sRes = await fetch(`${API_URL}/api/subjects?department_id=${deptId}`, { headers });
+      if (sRes.ok) {
+        const subjects = await sRes.json();
+        subjects.forEach(s => { const o = document.createElement('option'); o.value = s.id; o.textContent = `${s.code} — ${s.name}`; subSel.appendChild(o); });
+        subSel.disabled = false;
         return;
       }
+    } catch(e) {}
+    // Fallback: use subject IDs from Supabase known subjects
+    subSel.innerHTML = '<option value="">No subjects API — enter Subject ID manually</option>';
+    subSel.disabled = false;
+  } catch(e) { subSel.innerHTML = '<option value="">Error loading subjects</option>'; }
+}
 
-      document.getElementById('stats-row').classList.remove('hidden');
-      document.getElementById('students-section').classList.remove('hidden');
-      document.getElementById('total-count').textContent = students.length;
-      document.getElementById('present-count').textContent = students.length;
-      document.getElementById('absent-count').textContent = 0;
+async function loadStudents() {
+  const sem = document.getElementById('sel-semester').value;
+  const deptId = document.getElementById('sel-dept').value;
+  if (!sem || !deptId) { alert('Please select semester and department first'); return; }
+  try {
+    const res = await fetch(`${API_URL}/api/students?semester=${sem}&department_id=${deptId}`, { headers });
+    studentsData = await res.json();
+    if (!studentsData.length) { alert('No students found for selected criteria'); return; }
+    attendanceMap = {};
+    studentsData.forEach(s => { attendanceMap[s.id] = 'present'; });
+    renderAttendanceList();
+    document.getElementById('attendance-section').style.display = 'block';
+    document.getElementById('attendance-section').scrollIntoView({ behavior:'smooth' });
+  } catch(e) { alert('Failed to load students: ' + e.message); }
+}
 
-      const tbody = document.getElementById('attendance-table');
-      tbody.innerHTML = students.map((s, i) => `
-        <tr class="zebra-row border-b border-outline-variant/30">
-          <td class="px-6 py-3 font-mono text-on-surface-variant">${s.enrollment_number}</td>
-          <td class="px-6 py-3 font-bold">${s.users?.full_name || 'N/A'}</td>
-          <td class="px-6 py-3">
-            <span class="status-badge-${i} px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800">Present</span>
-          </td>
-          <td class="px-6 py-3 text-center">
-            <input type="checkbox" checked class="attendance-check w-5 h-5 accent-primary cursor-pointer" data-index="${i}" onchange="updateStats(this, ${i})"/>
-          </td>
-        </tr>
-      `).join('');
+function renderAttendanceList() {
+  const list = document.getElementById('students-att-list');
+  list.innerHTML = studentsData.map(s => {
+    const name = s.users?.full_name || 'N/A';
+    const initials = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    const status = attendanceMap[s.id] || 'present';
+    return `<div class="att-row" id="row-${s.id}">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#2a4a8e);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:11px;flex-shrink:0;">${initials}</div>
+        <div>
+          <div style="font-weight:700;font-size:13px;color:#111827;">${name}</div>
+          <div style="font-size:11px;color:#9ca3af;">${s.enrollment_number}</div>
+        </div>
+      </div>
+      <button class="toggle-btn ${status==='present'?'btn-present':'btn-absent'}" id="btn-${s.id}" onclick="toggleAttendance('${s.id}')">
+        ${status==='present'?'✓ Present':'✗ Absent'}
+      </button>
+    </div>`;
+  }).join('');
+}
 
-    } catch (err) {
-      showMessage('Failed to load students', 'error');
-    }
-  }
+function toggleAttendance(id) {
+  attendanceMap[id] = attendanceMap[id] === 'present' ? 'absent' : 'present';
+  const btn = document.getElementById('btn-'+id);
+  const status = attendanceMap[id];
+  btn.className = 'toggle-btn ' + (status==='present'?'btn-present':'btn-absent');
+  btn.textContent = status==='present'?'✓ Present':'✗ Absent';
+}
 
-  function updateStats(checkbox, index) {
-    const badge = document.querySelector(`.status-badge-${index}`);
-    if (checkbox.checked) {
-      badge.textContent = 'Present';
-      badge.className = `status-badge-${index} px-2 py-1 rounded-full text-xs font-bold bg-green-100 text-green-800`;
-    } else {
-      badge.textContent = 'Absent';
-      badge.className = `status-badge-${index} px-2 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800`;
-    }
-    const checks = document.querySelectorAll('.attendance-check');
-    const presentCount = [...checks].filter(c => c.checked).length;
-    document.getElementById('present-count').textContent = presentCount;
-    document.getElementById('absent-count').textContent = checks.length - presentCount;
-  }
+function markAll(status) {
+  studentsData.forEach(s => {
+    attendanceMap[s.id] = status;
+    const btn = document.getElementById('btn-'+s.id);
+    if (btn) { btn.className = 'toggle-btn '+(status==='present'?'btn-present':'btn-absent'); btn.textContent = status==='present'?'✓ Present':'✗ Absent'; }
+  });
+}
 
-  async function submitAttendance() {
-    const subjectId = document.getElementById('subject-id').value;
-    const date = document.getElementById('attendance-date').value;
-    const semester = parseInt(document.getElementById('semester').value);
+async function submitAttendance() {
+  const subjectId = document.getElementById('sel-subject').value;
+  const date = document.getElementById('att-date').value;
+  const sem = document.getElementById('sel-semester').value;
+  if (!subjectId) { alert('Please select a subject'); return; }
+  if (!date) { alert('Please select a date'); return; }
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true; btn.textContent = 'Submitting...';
+  try {
+    const attendanceDetails = studentsData.map(s => ({ student_id: s.id, status: attendanceMap[s.id] || 'present' }));
+    const res = await fetch(`${API_URL}/api/attendance`, {
+      method:'POST', headers,
+      body: JSON.stringify({ subject_id: subjectId, date, semester: parseInt(sem), attendance: attendanceDetails })
+    });
+    if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed to submit'); }
+    alert(`✅ Attendance submitted for ${studentsData.length} students!`);
+    document.getElementById('attendance-section').style.display = 'none';
+  } catch(e) { alert('Error: ' + e.message); }
+  finally { btn.disabled = false; btn.textContent = 'Submit Attendance'; }
+}
 
-    if (!subjectId || !date || !semester) {
-      showMessage('Please fill in Subject ID, Date and Semester', 'error');
-      return;
-    }
+function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '../login_edumanage_erp/code.html'; }
 
-    const checks = document.querySelectorAll('.attendance-check');
-    const attendanceDetails = students.map((s, i) => ({
-      student_id: s.id,
-      status: checks[i].checked ? 'present' : 'absent'
-    }));
-
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="material-symbols-outlined animate-spin">sync</span> Submitting...';
-
-    try {
-      const res = await fetch(`${API_URL}/api/attendance`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          subject_id: subjectId,
-          faculty_id: user.faculty_id || user.id,
-          date,
-          semester,
-          attendance_details: attendanceDetails
-        })
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || 'Failed to submit');
-      }
-
-      showMessage('Attendance submitted successfully!', 'success');
-    } catch (err) {
-      showMessage('Error: ' + err.message, 'error');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = '<span class="material-symbols-outlined">save</span> Submit Attendance';
-    }
-  }
-
-  function showMessage(msg, type) {
-    const box = document.getElementById('message-box');
-    box.textContent = msg;
-    box.className = `mt-4 p-4 rounded-lg text-sm font-semibold ${
-      type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-    }`;
-    box.classList.remove('hidden');
-    setTimeout(() => box.classList.add('hidden'), 4000);
-  }
-
-  function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '../login_edumanage_erp/code.html';
-  }
+loadDepts(); loadFacultyProfile();
 </script>
 </body>
 </html>

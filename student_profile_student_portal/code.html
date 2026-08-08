@@ -118,6 +118,10 @@
     </style>
 </head>
 <body class="text-on-surface">
+<header style="background:linear-gradient(135deg,#0a1628,#1a2f5e,#0a1628);border-bottom:3px solid #c9a84c;padding:8px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:400;box-shadow:0 2px 16px rgba(0,0,0,0.4);">
+  <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#f0d080);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#0a1628;flex-shrink:0;">RS</div>
+  <div><div style="color:#c9a84c;font-size:10px;font-weight:700;letter-spacing:2px;">Rohit Sharma Institute of Technology</div><div style="color:white;font-size:13px;font-weight:800;">RSIT EduManage ERP &nbsp;<span style="color:#c9a84c;font-size:10px;">★ INNOVATE · INSPIRE · EXCEL ★</span></div></div>
+</header>
 <!-- Side Navigation Shell -->
 <aside class="flex flex-col h-screen fixed left-0 top-0 py-lg px-md bg-primary dark:bg-primary docked left-0 h-full w-64 z-50">
 <div class="mb-xl px-sm">
@@ -452,4 +456,9 @@
             });
         });
     </script>
+<script>
+if (!localStorage.getItem("token")) window.location.href = "../login_edumanage_erp/code.html";
+function logout() { localStorage.removeItem("token"); localStorage.removeItem("user"); window.location.href = "../login_edumanage_erp/code.html"; }
+</script>
+<style>@media(max-width:768px){aside,nav.fixed{display:none!important;}main,div.ml-64{margin-left:0!important;}}</style>
 </body></html>
