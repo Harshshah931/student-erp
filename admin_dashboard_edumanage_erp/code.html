@@ -4,19 +4,18 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>RSIT EduManage — Admin Dashboard</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{--primary:#1a2f5e;--gold:#c9a84c;--gold-light:#f0d080;}
 body{font-family:'Inter',sans-serif;background:#f3f4f6;}
-.rsit-header{background:linear-gradient(135deg,#0a1628,#1a2f5e,#0a1628);border-bottom:3px solid var(--gold);padding:8px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:300;box-shadow:0 2px 16px rgba(0,0,0,0.4);}
+.rsit-header{background:linear-gradient(135deg,#0a1628,#1a2f5e,#0a1628);border-bottom:3px solid var(--gold);padding:8px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:0 2px 16px rgba(0,0,0,0.4);}
 .rsit-logo{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:#0a1628;flex-shrink:0;}
-.rsit-name{color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
-.rsit-tag{color:white;font-size:13px;font-weight:800;}
-.sidebar{width:240px;background:var(--primary);height:calc(100vh - 59px);position:fixed;left:0;top:59px;display:flex;flex-direction:column;padding:16px 12px;z-index:200;overflow-y:auto;}
+.sidebar{width:240px;background:var(--primary);height:calc(100vh - 59px);position:fixed;left:0;top:59px;display:flex;flex-direction:column;padding:16px 12px;z-index:200;}
 .sidebar-title{color:white;font-size:13px;font-weight:800;padding:4px 8px 14px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:10px;}
-.sidebar-title small{color:var(--gold);font-size:10px;font-weight:500;display:block;letter-spacing:1px;}
+.sidebar-title small{color:var(--gold);font-size:10px;display:block;letter-spacing:1px;}
 .nav-link{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.65);border-radius:10px;text-decoration:none;font-size:13px;font-weight:500;margin-bottom:2px;transition:all 0.2s;cursor:pointer;border:none;background:none;width:100%;}
 .nav-link:hover,.nav-link.active{background:rgba(201,168,76,0.2);color:white;}
 .nav-link .material-symbols-outlined{font-size:18px;}
@@ -24,177 +23,260 @@ body{font-family:'Inter',sans-serif;background:#f3f4f6;}
 .main{margin-left:240px;min-height:calc(100vh - 59px);padding:24px;}
 .bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--primary);border-top:2px solid var(--gold);z-index:300;}
 .bottom-nav-inner{display:flex;justify-content:space-around;padding:6px 0 env(safe-area-inset-bottom,4px);}
-.bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;color:rgba(255,255,255,0.6);font-size:10px;font-weight:500;cursor:pointer;text-decoration:none;border-radius:8px;transition:all 0.2s;}
+.bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;color:rgba(255,255,255,0.6);font-size:10px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.2s;}
 .bn-item.active,.bn-item:hover{color:var(--gold);}
 .bn-item .material-symbols-outlined{font-size:22px;}
-@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:14px;padding-bottom:80px;}.bottom-nav{display:block;}}
+@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:14px;padding-bottom:80px;}.bottom-nav{display:block;}.hide-mobile{display:none;}.grid-2{grid-template-columns:1fr!important;}.grid-4{grid-template-columns:repeat(2,1fr)!important;}}
 .card{background:white;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.07);}
-.stat-card{background:white;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.07);border-top:4px solid var(--gold);}
-.stat-val{font-size:32px;font-weight:900;color:var(--primary);}
-.stat-label{font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
-.announce-item{border-left:4px solid var(--gold);padding:12px 16px;background:#fffbeb;border-radius:0 10px 10px 0;margin-bottom:10px;}
-.announce-title{font-weight:700;color:var(--primary);font-size:14px;}
-.announce-date{font-size:11px;color:#9ca3af;margin-top:2px;}
-.announce-body{font-size:13px;color:#374151;margin-top:4px;}
-.about-stat{text-align:center;padding:16px;background:#f8fafc;border-radius:12px;}
-.about-stat-val{font-size:24px;font-weight:900;color:var(--primary);}
-.about-stat-label{font-size:11px;color:#6b7280;margin-top:2px;}
-.page-title{font-size:20px;font-weight:900;color:var(--primary);}
-.page-sub{font-size:13px;color:#6b7280;margin-top:2px;margin-bottom:20px;}
+.stat-card{background:white;border-radius:14px;padding:18px 20px;box-shadow:0 1px 6px rgba(0,0,0,0.07);position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,0.1);}
+.stat-card .bg-icon{position:absolute;right:-8px;bottom:-8px;font-size:64px;opacity:0.06;color:var(--primary);}
+.quick-action{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;cursor:pointer;border:1.5px solid #e5e7eb;background:white;transition:all 0.2s;text-decoration:none;color:#374151;font-size:13px;font-weight:600;width:100%;}
+.quick-action:hover{border-color:var(--gold);background:#fffbf0;color:var(--primary);}
+.quick-action .material-symbols-outlined{font-size:20px;color:var(--gold);}
+.announce-card{border-left:4px solid var(--gold);background:#fffdf5;border-radius:0 10px 10px 0;padding:12px 14px;margin-bottom:10px;}
+.announce-card:last-child{margin-bottom:0;}
+.badge-priority{display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:700;margin-left:8px;}
+.badge-urgent{background:#fee2e2;color:#dc2626;}
+.badge-info{background:#dbeafe;color:#1d4ed8;}
+.badge-general{background:#f3f4f6;color:#6b7280;}
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #f3f4f6;}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:400;align-items:center;justify-content:center;padding:16px;}
+.modal-box{background:white;border-radius:16px;padding:28px;width:100%;max-width:440px;}
+input,select,textarea{border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:13px;width:100%;outline:none;transition:border 0.2s;background:#f9fafb;font-family:'Inter',sans-serif;}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,168,76,0.15);}
+.today-time{color:rgba(255,255,255,0.7);font-size:12px;font-weight:500;}
 </style>
 </head>
 <body>
 
-<!-- RSIT Header -->
 <header class="rsit-header">
-  <div class="rsit-logo">RS</div>
-  <div>
-    <div class="rsit-name">Rohit Sharma Institute of Technology</div>
-    <div class="rsit-tag">RSIT EduManage ERP &nbsp;<span style="color:var(--gold);font-size:10px;">★ INNOVATE · INSPIRE · EXCEL ★</span></div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="rsit-logo">RS</div>
+    <div>
+      <div style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;">Rohit Sharma Institute of Technology</div>
+      <div style="color:white;font-size:13px;font-weight:800;">RSIT EduManage ERP &nbsp;<span style="color:var(--gold);font-size:10px;">★ INNOVATE · INSPIRE · EXCEL ★</span></div>
+    </div>
   </div>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:10px;">
-    <span class="material-symbols-outlined" style="color:rgba(255,255,255,0.7);cursor:pointer;" title="Notifications">notifications</span>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="today-time" id="live-time"></div>
+    <div style="position:relative;cursor:pointer;">
+      <span class="material-symbols-outlined" style="color:rgba(255,255,255,0.7);font-size:22px;">notifications</span>
+      <span id="notif-dot" style="display:none;position:absolute;top:0;right:0;width:8px;height:8px;background:#dc2626;border-radius:50%;border:2px solid #0a1628;"></span>
+    </div>
   </div>
 </header>
 
-<!-- Sidebar -->
 <aside class="sidebar">
   <div class="sidebar-title">EduManage ERP <small>ADMIN PORTAL</small></div>
   <nav style="flex:1;">
-    <a class="nav-link active" href="../admin_dashboard_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">dashboard</span>Dashboard
-    </a>
-    <a class="nav-link" href="../manage_students_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">groups</span>Students
-    </a>
-    <a class="nav-link" href="../manage_faculty_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">badge</span>Faculty
-    </a>
-    <a class="nav-link" href="../fee_management_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">payments</span>Fees
-    </a>
+    <a class="nav-link active" href="../admin_dashboard_edumanage_erp/code.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+    <a class="nav-link" href="../manage_students_edumanage_erp/code.html"><span class="material-symbols-outlined">groups</span>Students</a>
+    <a class="nav-link" href="../manage_faculty_edumanage_erp/code.html"><span class="material-symbols-outlined">badge</span>Faculty</a>
+    <a class="nav-link" href="../fee_management_edumanage_erp/code.html"><span class="material-symbols-outlined">payments</span>Fees</a>
   </nav>
   <div class="nav-user">
     <div style="padding:10px 12px;">
       <div style="color:white;font-weight:700;font-size:13px;" id="admin-name">Loading...</div>
       <div style="color:var(--gold);font-size:11px;" id="admin-role">Administrator</div>
     </div>
-    <button class="nav-link" onclick="logout()">
-      <span class="material-symbols-outlined">logout</span>Logout
-    </button>
+    <button class="nav-link" onclick="logout()"><span class="material-symbols-outlined">logout</span>Logout</button>
   </div>
 </aside>
 
-<!-- Main -->
 <main class="main">
-  <div class="page-title">Institutional Overview</div>
-  <div class="page-sub">Real-time administration metrics — RSIT EduManage ERP</div>
 
-  <!-- Stats -->
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;" id="stats-grid">
-    <div class="stat-card">
-      <span class="material-symbols-outlined" style="color:var(--gold);font-size:28px;font-variation-settings:'FILL' 1;">groups</span>
-      <div class="stat-label" style="margin-top:8px;">Total Students</div>
-      <div class="stat-val" id="total-students">--</div>
+  <!-- Page Header -->
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:10px;">
+    <div>
+      <div style="font-size:22px;font-weight:900;color:var(--primary);">Institutional Overview</div>
+      <div style="font-size:13px;color:#6b7280;">Real-time administration metrics — RSIT EduManage ERP</div>
     </div>
-    <div class="stat-card">
-      <span class="material-symbols-outlined" style="color:var(--gold);font-size:28px;font-variation-settings:'FILL' 1;">badge</span>
-      <div class="stat-label" style="margin-top:8px;">Total Faculty</div>
-      <div class="stat-val" id="total-faculty">--</div>
+    <button onclick="document.getElementById('add-announce-modal').style.display='flex'" style="background:var(--gold);color:#0a1628;border:none;padding:9px 18px;border-radius:10px;font-weight:700;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:6px;">
+      <span class="material-symbols-outlined" style="font-size:17px;">add</span>Announcement
+    </button>
+  </div>
+
+  <!-- Stat Cards -->
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;" class="grid-4">
+    <div class="stat-card" style="border-top:4px solid var(--gold);">
+      <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Total Students</div>
+      <div style="font-size:30px;font-weight:900;color:var(--primary);" id="stat-students">--</div>
+      <div style="font-size:11px;color:#16a34a;font-weight:600;margin-top:4px;" id="stat-students-sub"></div>
+      <span class="material-symbols-outlined bg-icon">groups</span>
     </div>
-    <div class="stat-card">
-      <span class="material-symbols-outlined" style="color:#dc2626;font-size:28px;font-variation-settings:'FILL' 1;">payments</span>
-      <div class="stat-label" style="margin-top:8px;">Pending Fees</div>
-      <div class="stat-val" id="pending-fees">--</div>
+    <div class="stat-card" style="border-top:4px solid #3b82f6;">
+      <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Total Faculty</div>
+      <div style="font-size:30px;font-weight:900;color:var(--primary);" id="stat-faculty">--</div>
+      <div style="font-size:11px;color:#3b82f6;font-weight:600;margin-top:4px;" id="stat-faculty-sub"></div>
+      <span class="material-symbols-outlined bg-icon">badge</span>
     </div>
-    <div class="stat-card">
-      <span class="material-symbols-outlined" style="color:var(--gold);font-size:28px;font-variation-settings:'FILL' 1;">corporate_fare</span>
-      <div class="stat-label" style="margin-top:8px;">Departments</div>
-      <div class="stat-val" id="total-depts">--</div>
+    <div class="stat-card" style="border-top:4px solid #dc2626;">
+      <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Pending Fees</div>
+      <div style="font-size:30px;font-weight:900;color:#dc2626;" id="stat-fees">--</div>
+      <div style="font-size:11px;color:#6b7280;font-weight:600;margin-top:4px;" id="stat-fees-sub"></div>
+      <span class="material-symbols-outlined bg-icon">payments</span>
+    </div>
+    <div class="stat-card" style="border-top:4px solid #8b5cf6;">
+      <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Departments</div>
+      <div style="font-size:30px;font-weight:900;color:var(--primary);" id="stat-depts">--</div>
+      <div style="font-size:11px;color:#8b5cf6;font-weight:600;margin-top:4px;">Active programs</div>
+      <span class="material-symbols-outlined bg-icon">school</span>
     </div>
   </div>
 
-  <!-- Announcements + About RSIT -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;">
+  <!-- Main Grid -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px;" class="grid-2">
 
-    <!-- Announcements -->
+    <!-- Department Distribution Chart -->
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <div style="font-weight:800;font-size:16px;color:var(--primary);">📢 Announcements</div>
-        <button onclick="showAddAnnouncement()" style="background:var(--gold);color:#0a1628;border:none;padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">+ Add</button>
-      </div>
-      <div id="announcements-list">
-        <div class="announce-item">
-          <div class="announce-title">Welcome to RSIT EduManage ERP</div>
-          <div class="announce-date">August 2025</div>
-          <div class="announce-body">The new academic management portal is now live. All students and faculty can access their respective portals.</div>
-        </div>
-        <div class="announce-item">
-          <div class="announce-title">Semester Examinations Schedule</div>
-          <div class="announce-date">August 2025</div>
-          <div class="announce-body">End semester examinations for all departments will commence from October 2025. Detailed timetable will be shared soon.</div>
-        </div>
-        <div class="announce-item">
-          <div class="announce-title">Fee Payment Reminder</div>
-          <div class="announce-date">August 2025</div>
-          <div class="announce-body">Students with pending fees are requested to clear dues before September 30, 2025 to avoid late fee charges.</div>
+        <div style="font-weight:800;font-size:14px;color:var(--primary);">
+          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;color:var(--gold);">bar_chart</span>
+          Students by Department
         </div>
       </div>
+      <canvas id="deptChart" style="max-height:220px;"></canvas>
     </div>
 
-    <!-- About RSIT -->
+    <!-- Fee Status Chart -->
     <div class="card">
-      <div style="font-weight:800;font-size:16px;color:var(--primary);margin-bottom:4px;">🏛️ About RSIT</div>
-      <div style="font-size:12px;color:#6b7280;margin-bottom:16px;">Rohit Sharma Institute of Technology</div>
-      <div style="display:flex;align-items:center;gap:12px;padding:14px;background:linear-gradient(135deg,#1a2f5e,#2a4a8e);border-radius:12px;margin-bottom:16px;">
-        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-light));display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#0a1628;flex-shrink:0;">RS</div>
-        <div>
-          <div style="color:white;font-weight:800;font-size:13px;">ROHIT SHARMA INSTITUTE OF TECHNOLOGY</div>
-          <div style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;">INNOVATE · INSPIRE · EXCEL</div>
-          <div style="color:#93c5fd;font-size:11px;margin-top:2px;">Affiliated to Mumbai University</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div style="font-weight:800;font-size:14px;color:var(--primary);">
+          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;color:var(--gold);">donut_large</span>
+          Fee Collection Status
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
-        <div class="about-stat"><div class="about-stat-val">2005</div><div class="about-stat-label">Est. Year</div></div>
-        <div class="about-stat"><div class="about-stat-val">12+</div><div class="about-stat-label">Departments</div></div>
-        <div class="about-stat"><div class="about-stat-val">A+</div><div class="about-stat-label">NAAC Grade</div></div>
+      <div style="display:flex;align-items:center;gap:20px;">
+        <canvas id="feeChart" style="max-height:180px;max-width:180px;"></canvas>
+        <div id="fee-legend" style="flex:1;font-size:12px;"></div>
       </div>
-      <div style="font-size:12px;color:#6b7280;line-height:1.7;">RSIT is committed to providing quality technical education with state-of-the-art infrastructure, experienced faculty, and industry-aligned curriculum to shape the engineers and innovators of tomorrow.</div>
     </div>
   </div>
 
-  <!-- Add Announcement Modal -->
-  <div id="announce-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;align-items:center;justify-content:center;">
-    <div style="background:white;border-radius:16px;padding:28px;width:90%;max-width:480px;">
-      <div style="font-weight:800;font-size:16px;color:var(--primary);margin-bottom:16px;">Add Announcement</div>
-      <input id="ann-title" placeholder="Title" style="width:100%;border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:10px;outline:none;"/>
-      <textarea id="ann-body" placeholder="Message..." rows="3" style="width:100%;border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:16px;outline:none;resize:none;"></textarea>
-      <div style="display:flex;gap:10px;justify-content:flex-end;">
-        <button onclick="document.getElementById('announce-modal').style.display='none'" style="border:1.5px solid #e5e7eb;background:white;padding:8px 18px;border-radius:8px;cursor:pointer;font-size:13px;">Cancel</button>
-        <button onclick="addAnnouncement()" style="background:var(--gold);color:#0a1628;border:none;padding:8px 18px;border-radius:8px;font-weight:700;cursor:pointer;font-size:13px;">Post</button>
+  <!-- Quick Actions + Announcements + Activity -->
+  <div style="display:grid;grid-template-columns:260px 1fr 1fr;gap:18px;margin-bottom:18px;" class="grid-2">
+
+    <!-- Quick Actions -->
+    <div class="card" style="grid-column:1;">
+      <div style="font-weight:800;font-size:14px;color:var(--primary);margin-bottom:14px;">
+        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;color:var(--gold);">bolt</span>
+        Quick Actions
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a class="quick-action" href="../manage_students_edumanage_erp/code.html">
+          <span class="material-symbols-outlined">person_add</span>Add Student
+        </a>
+        <a class="quick-action" href="../manage_faculty_edumanage_erp/code.html">
+          <span class="material-symbols-outlined">badge</span>Add Faculty
+        </a>
+        <a class="quick-action" href="../fee_management_edumanage_erp/code.html">
+          <span class="material-symbols-outlined">payments</span>Manage Fees
+        </a>
+        <button class="quick-action" onclick="exportStudentReport()">
+          <span class="material-symbols-outlined">download</span>Export Report
+        </button>
+      </div>
+
+      <!-- RSIT Info compact -->
+      <div style="margin-top:20px;padding:14px;background:var(--primary);border-radius:12px;">
+        <div style="color:var(--gold);font-size:10px;font-weight:700;letter-spacing:1px;margin-bottom:8px;">RSIT AT A GLANCE</div>
+        <div style="display:flex;justify-content:space-between;">
+          <div style="text-align:center;">
+            <div style="color:white;font-weight:800;font-size:16px;">2005</div>
+            <div style="color:rgba(255,255,255,0.5);font-size:10px;">Est.</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="color:white;font-weight:800;font-size:16px;">12+</div>
+            <div style="color:rgba(255,255,255,0.5);font-size:10px;">Depts</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="color:var(--gold);font-weight:800;font-size:16px;">A+</div>
+            <div style="color:rgba(255,255,255,0.5);font-size:10px;">NAAC</div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Announcements -->
+    <div class="card" style="grid-column:2;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div style="font-weight:800;font-size:14px;color:var(--primary);">
+          <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;color:var(--gold);">campaign</span>
+          Announcements
+        </div>
+        <button onclick="document.getElementById('add-announce-modal').style.display='flex'" style="background:var(--gold);color:#0a1628;border:none;padding:5px 12px;border-radius:8px;font-weight:700;cursor:pointer;font-size:11px;">+ Add</button>
+      </div>
+      <div id="announcements-container">
+        <div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">Loading...</div>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card" style="grid-column:3;">
+      <div style="font-weight:800;font-size:14px;color:var(--primary);margin-bottom:14px;">
+        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;color:var(--gold);">history</span>
+        Recent Activity
+      </div>
+      <div id="activity-feed">
+        <div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">Loading activity...</div>
+      </div>
+    </div>
+
   </div>
+
+  <!-- Batch / Semester Distribution -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;" class="grid-2">
+    <div class="card">
+      <div style="font-weight:800;font-size:14px;color:var(--primary);margin-bottom:16px;">
+        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;color:var(--gold);">calendar_today</span>
+        Students by Batch Year
+      </div>
+      <canvas id="batchChart" style="max-height:180px;"></canvas>
+    </div>
+    <div class="card">
+      <div style="font-weight:800;font-size:14px;color:var(--primary);margin-bottom:16px;">
+        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px;color:var(--gold);">school</span>
+        Students by Semester
+      </div>
+      <canvas id="semChart" style="max-height:180px;"></canvas>
+    </div>
+  </div>
+
 </main>
 
-<!-- Bottom Nav (mobile) -->
+<!-- Add Announcement Modal -->
+<div class="modal-overlay" id="add-announce-modal">
+  <div class="modal-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div style="font-weight:800;font-size:16px;color:var(--primary);">Add Announcement</div>
+      <button onclick="document.getElementById('add-announce-modal').style.display='none'" style="background:none;border:none;cursor:pointer;color:#9ca3af;"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <input id="ann-title" placeholder="Title *" type="text"/>
+      <textarea id="ann-body" placeholder="Message *" rows="3" style="resize:vertical;"></textarea>
+      <select id="ann-priority">
+        <option value="general">General</option>
+        <option value="info">Info</option>
+        <option value="urgent">Urgent</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:18px;">
+      <button onclick="document.getElementById('add-announce-modal').style.display='none'" style="flex:1;border:1.5px solid #e5e7eb;background:white;padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;">Cancel</button>
+      <button onclick="addAnnouncement()" style="flex:1;background:var(--primary);color:white;border:none;padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:700;">Post</button>
+    </div>
+  </div>
+</div>
+
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
-    <a class="bn-item active" href="../admin_dashboard_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">dashboard</span>Dashboard
-    </a>
-    <a class="bn-item" href="../manage_students_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">groups</span>Students
-    </a>
-    <a class="bn-item" href="../manage_faculty_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">badge</span>Faculty
-    </a>
-    <a class="bn-item" href="../fee_management_edumanage_erp/code.html">
-      <span class="material-symbols-outlined">payments</span>Fees
-    </a>
-    <div class="bn-item" onclick="logout()">
-      <span class="material-symbols-outlined">logout</span>Logout
-    </div>
+    <a class="bn-item active" href="../admin_dashboard_edumanage_erp/code.html"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+    <a class="bn-item" href="../manage_students_edumanage_erp/code.html"><span class="material-symbols-outlined">groups</span>Students</a>
+    <a class="bn-item" href="../manage_faculty_edumanage_erp/code.html"><span class="material-symbols-outlined">badge</span>Faculty</a>
+    <a class="bn-item" href="../fee_management_edumanage_erp/code.html"><span class="material-symbols-outlined">payments</span>Fees</a>
+    <div class="bn-item" onclick="logout()"><span class="material-symbols-outlined">logout</span>Logout</div>
   </div>
 </nav>
 
@@ -202,56 +284,275 @@ body{font-family:'Inter',sans-serif;background:#f3f4f6;}
 const API_URL = 'https://student-erp-production.up.railway.app';
 const token = localStorage.getItem('token');
 const _user = JSON.parse(localStorage.getItem('user') || '{}');
-if (!token) window.location.href = '../login_edumanage_erp/code.html';
+if (!token) { window.location.href = '../login_edumanage_erp/code.html'; }
 
 document.getElementById('admin-name').textContent = _user.full_name || 'Admin';
-document.getElementById('admin-role').textContent = _user.roles?.name ? _user.roles.name.charAt(0).toUpperCase() + _user.roles.name.slice(1) : 'Administrator';
+document.getElementById('admin-role').textContent = _user.roles?.name
+  ? _user.roles.name.charAt(0).toUpperCase() + _user.roles.name.slice(1)
+  : 'Administrator';
 
-function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '../login_edumanage_erp/code.html'; }
-function showAddAnnouncement() { document.getElementById('announce-modal').style.display = 'flex'; }
+const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
+
+// Live clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('live-time').textContent = now.toLocaleString('en-IN', {
+    weekday: 'short', day: 'numeric', month: 'short',
+    hour: '2-digit', minute: '2-digit'
+  });
+}
+updateClock(); setInterval(updateClock, 60000);
+
+// Announcements (stored in localStorage since no backend endpoint for this)
+let announcements = JSON.parse(localStorage.getItem('rsit_announcements') || 'null') || [
+  { id: 1, title: 'Welcome to RSIT EduManage ERP', body: 'The new academic management portal is now live. All students and faculty can access their respective portals.', date: 'August 2025', priority: 'info' },
+  { id: 2, title: 'Semester Examinations Schedule', body: 'End semester examinations for all departments will commence from October 2025. Detailed timetable will be shared soon.', date: 'August 2025', priority: 'urgent' },
+  { id: 3, title: 'Fee Payment Reminder', body: 'Students with pending fees are requested to clear dues before September 30, 2025 to avoid late fee charges.', date: 'August 2025', priority: 'general' },
+];
+
+function renderAnnouncements() {
+  const container = document.getElementById('announcements-container');
+  if (!announcements.length) { container.innerHTML = '<div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">No announcements</div>'; return; }
+  const priorityLabel = { urgent: 'Urgent', info: 'Info', general: 'General' };
+  const priorityClass = { urgent: 'badge-urgent', info: 'badge-info', general: 'badge-general' };
+  container.innerHTML = announcements.slice(0, 4).map((a, i) => `
+    <div class="announce-card" style="${a.priority==='urgent'?'border-left-color:#dc2626':a.priority==='info'?'border-left-color:#3b82f6':''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+        <div style="font-weight:700;font-size:13px;color:var(--primary);">${a.title}
+          <span class="badge-priority ${priorityClass[a.priority]||'badge-general'}">${priorityLabel[a.priority]||'General'}</span>
+        </div>
+        <button onclick="deleteAnnouncement(${i})" style="background:none;border:none;cursor:pointer;color:#d1d5db;margin-left:8px;flex-shrink:0;" title="Delete">
+          <span class="material-symbols-outlined" style="font-size:15px;">close</span>
+        </button>
+      </div>
+      <div style="font-size:11px;color:#9ca3af;margin-bottom:4px;">${a.date}</div>
+      <div style="font-size:12px;color:#6b7280;line-height:1.5;">${a.body}</div>
+    </div>
+  `).join('');
+}
 
 function addAnnouncement() {
   const title = document.getElementById('ann-title').value.trim();
   const body = document.getElementById('ann-body').value.trim();
-  if (!title || !body) return;
-  const now = new Date().toLocaleDateString('en-IN', { month:'long', year:'numeric' });
-  const item = `<div class="announce-item"><div class="announce-title">${title}</div><div class="announce-date">${now}</div><div class="announce-body">${body}</div></div>`;
-  document.getElementById('announcements-list').insertAdjacentHTML('afterbegin', item);
+  const priority = document.getElementById('ann-priority').value;
+  if (!title || !body) { alert('Title and message are required.'); return; }
+  const now = new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+  announcements.unshift({ id: Date.now(), title, body, date: now, priority });
+  localStorage.setItem('rsit_announcements', JSON.stringify(announcements));
+  renderAnnouncements();
+  document.getElementById('add-announce-modal').style.display = 'none';
   document.getElementById('ann-title').value = '';
   document.getElementById('ann-body').value = '';
-  document.getElementById('announce-modal').style.display = 'none';
 }
 
-async function loadStats() {
-  const h = { 'Authorization': 'Bearer ' + token };
+function deleteAnnouncement(i) {
+  if (!confirm('Delete this announcement?')) return;
+  announcements.splice(i, 1);
+  localStorage.setItem('rsit_announcements', JSON.stringify(announcements));
+  renderAnnouncements();
+}
+
+// Charts
+let deptChart, feeChart, batchChart, semChart;
+
+function buildDeptChart(data) {
+  const ctx = document.getElementById('deptChart').getContext('2d');
+  const labels = data.map(d => d.name.replace('Engineering','Engg').replace('Artificial Intelligence & Data Science','AI & DS'));
+  const values = data.map(d => d.count);
+  const colors = ['#1a2f5e','#c9a84c','#3b82f6','#16a34a','#8b5cf6','#dc2626','#f59e0b','#06b6d4','#ec4899','#10b981','#f97316','#6366f1'];
+  if (deptChart) deptChart.destroy();
+  deptChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderRadius: 6, borderSkipped: false }] },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } }, x: { ticks: { font: { size: 10 } } } } }
+  });
+}
+
+function buildFeeChart(paid, pending, partial) {
+  const ctx = document.getElementById('feeChart').getContext('2d');
+  if (feeChart) feeChart.destroy();
+  const total = paid + pending + partial;
+  if (total === 0) {
+    document.getElementById('fee-legend').innerHTML = '<div style="color:#9ca3af;font-size:12px;">No fee records yet</div>';
+    return;
+  }
+  feeChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Paid', 'Pending', 'Partial'],
+      datasets: [{ data: [paid, pending, partial], backgroundColor: ['#16a34a','#dc2626','#ca8a04'], borderWidth: 2, borderColor: '#fff' }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } }, cutout: '65%' }
+  });
+  document.getElementById('fee-legend').innerHTML = [
+    { label: 'Paid', val: paid, color: '#16a34a' },
+    { label: 'Pending', val: pending, color: '#dc2626' },
+    { label: 'Partial', val: partial, color: '#ca8a04' },
+  ].map(x => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:${x.color};flex-shrink:0;"></div>
+      <div>
+        <div style="font-weight:700;color:#374151;">${x.val}</div>
+        <div style="color:#9ca3af;font-size:11px;">${x.label} (${total ? Math.round(x.val/total*100) : 0}%)</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function buildBatchChart(data) {
+  const ctx = document.getElementById('batchChart').getContext('2d');
+  if (batchChart) batchChart.destroy();
+  batchChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: data.map(d => d.batch),
+      datasets: [{ data: data.map(d => d.count), backgroundColor: '#3b82f6', borderRadius: 6, borderSkipped: false }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+  });
+}
+
+function buildSemChart(data) {
+  const ctx = document.getElementById('semChart').getContext('2d');
+  if (semChart) semChart.destroy();
+  semChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: data.map(d => 'Sem ' + d.sem),
+      datasets: [{
+        data: data.map(d => d.count),
+        borderColor: '#c9a84c', backgroundColor: 'rgba(201,168,76,0.1)',
+        borderWidth: 2.5, tension: 0.4, fill: true,
+        pointBackgroundColor: '#c9a84c', pointRadius: 4
+      }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+  });
+}
+
+function buildActivityFeed(students, faculty) {
+  const items = [];
+  const recentStudents = [...students].slice(-5).reverse();
+  const recentFaculty = [...faculty].slice(-3).reverse();
+  recentStudents.forEach(s => {
+    items.push({ color: '#16a34a', icon: 'person_add', text: `<b>${s.users?.full_name || 'Student'}</b> enrolled — ${s.departments?.name || 'N/A'}`, sub: `Sem ${s.current_semester || '?'} · Batch ${s.batch_year || '?'}` });
+  });
+  recentFaculty.forEach(f => {
+    items.push({ color: '#3b82f6', icon: 'badge', text: `<b>${f.users?.full_name || 'Faculty'}</b> joined faculty — ${f.departments?.name || 'N/A'}`, sub: f.designation || '' });
+  });
+  if (!items.length) {
+    document.getElementById('activity-feed').innerHTML = '<div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">No recent activity</div>';
+    return;
+  }
+  document.getElementById('activity-feed').innerHTML = items.slice(0, 6).map(item => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${item.color};"></div>
+      <div style="flex:1;">
+        <div style="font-size:12px;color:#374151;line-height:1.4;">${item.text}</div>
+        <div style="font-size:11px;color:#9ca3af;">${item.sub}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function loadDashboard() {
   try {
-    const [s, f, fees, d] = await Promise.all([
-      fetch(`${API_URL}/api/students`, { headers: h }).then(r => r.json()),
-      fetch(`${API_URL}/api/faculty`, { headers: h }).then(r => r.json()),
-      fetch(`${API_URL}/api/fees`, { headers: h }).then(r => r.json()),
-      fetch(`${API_URL}/api/departments`, { headers: h }).then(r => r.json()),
+    const [studentsRes, facultyRes, feesRes, deptsRes] = await Promise.allSettled([
+      fetch(`${API_URL}/api/students`, { headers }),
+      fetch(`${API_URL}/api/faculty`, { headers }),
+      fetch(`${API_URL}/api/fees`, { headers }),
+      fetch(`${API_URL}/api/departments`, { headers }),
     ]);
-    document.getElementById('total-students').textContent = Array.isArray(s) ? s.length : '--';
-    document.getElementById('total-faculty').textContent = Array.isArray(f) ? f.length : '--';
-    document.getElementById('pending-fees').textContent = Array.isArray(fees) ? fees.filter(x => x.status !== 'paid').length : '--';
-    document.getElementById('total-depts').textContent = Array.isArray(d) ? d.length : '--';
-  } catch(e) { console.error(e); }
+
+    // Students
+    let students = [];
+    if (studentsRes.status === 'fulfilled' && studentsRes.value.ok) {
+      const d = await studentsRes.value.json();
+      if (Array.isArray(d)) students = d;
+    }
+
+    // Faculty
+    let faculty = [];
+    if (facultyRes.status === 'fulfilled' && facultyRes.value.ok) {
+      const d = await facultyRes.value.json();
+      if (Array.isArray(d)) faculty = d;
+    }
+
+    // Fees
+    let fees = [];
+    if (feesRes.status === 'fulfilled' && feesRes.value.ok) {
+      const d = await feesRes.value.json();
+      if (Array.isArray(d)) fees = d;
+    }
+
+    // Departments
+    let depts = [];
+    if (deptsRes.status === 'fulfilled' && deptsRes.value.ok) {
+      const d = await deptsRes.value.json();
+      if (Array.isArray(d)) depts = d;
+    }
+
+    // Stat cards
+    document.getElementById('stat-students').textContent = students.length;
+    document.getElementById('stat-students-sub').textContent = depts.length ? depts.length + ' departments' : '';
+    document.getElementById('stat-faculty').textContent = faculty.length;
+    document.getElementById('stat-faculty-sub').textContent = faculty.length ? 'Teaching staff' : '';
+    const pendingFees = fees.filter(f => f.status !== 'paid').length;
+    document.getElementById('stat-fees').textContent = pendingFees;
+    document.getElementById('stat-fees-sub').textContent = fees.length ? `of ${fees.length} total records` : 'No records yet';
+    document.getElementById('stat-depts').textContent = depts.length || 12;
+
+    // Notification dot if pending fees > 0
+    if (pendingFees > 0) document.getElementById('notif-dot').style.display = 'block';
+
+    // Dept distribution chart
+    const deptMap = {};
+    students.forEach(s => {
+      const name = s.departments?.name || 'Unknown';
+      deptMap[name] = (deptMap[name] || 0) + 1;
+    });
+    const deptData = Object.entries(deptMap).map(([name, count]) => ({ name, count })).sort((a,b) => b.count - a.count);
+    if (deptData.length) buildDeptChart(deptData);
+
+    // Fee chart
+    const paid = fees.filter(f => f.status === 'paid').length;
+    const pending = fees.filter(f => f.status === 'pending' || !f.status).length;
+    const partial = fees.filter(f => f.status === 'partial').length;
+    buildFeeChart(paid, pending, partial);
+
+    // Batch chart
+    const batchMap = {};
+    students.forEach(s => { const b = s.batch_year || 'N/A'; batchMap[b] = (batchMap[b] || 0) + 1; });
+    const batchData = Object.entries(batchMap).sort((a,b)=>a[0].localeCompare(b[0])).map(([batch,count])=>({batch,count}));
+    if (batchData.length) buildBatchChart(batchData);
+
+    // Semester chart
+    const semMap = {};
+    for (let i = 1; i <= 8; i++) semMap[i] = 0;
+    students.forEach(s => { const sem = parseInt(s.current_semester)||0; if (sem >= 1 && sem <= 8) semMap[sem]++; });
+    const semData = Object.entries(semMap).map(([sem,count])=>({sem:parseInt(sem),count})).sort((a,b)=>a.sem-b.sem);
+    buildSemChart(semData);
+
+    // Activity feed
+    buildActivityFeed(students, faculty);
+
+  } catch (e) {
+    console.error('Dashboard load error:', e);
+  }
 }
 
-// Responsive grid
-function adjustGrid() {
-  const g = document.getElementById('stats-grid');
-  if (window.innerWidth < 640) g.style.gridTemplateColumns = 'repeat(2,1fr)';
-  else if (window.innerWidth < 1024) g.style.gridTemplateColumns = 'repeat(2,1fr)';
-  else g.style.gridTemplateColumns = 'repeat(4,1fr)';
-
-  const cards = document.querySelector('.main > div:nth-child(3)');
-  if (cards && window.innerWidth < 768) cards.style.gridTemplateColumns = '1fr';
+function exportStudentReport() {
+  window.location.href = '../manage_students_edumanage_erp/code.html';
 }
 
-loadStats();
-adjustGrid();
-window.addEventListener('resize', adjustGrid);
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '../login_edumanage_erp/code.html';
+}
+
+renderAnnouncements();
+loadDashboard();
 </script>
 </body>
 </html>

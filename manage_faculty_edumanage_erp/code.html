@@ -36,6 +36,10 @@ input,select{border:1.5px solid #e5e7eb;border-radius:8px;padding:9px 12px;font-
 input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,168,76,0.15);}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:400;align-items:center;justify-content:center;padding:16px;}
 .modal-box{background:white;border-radius:16px;padding:28px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;}
+.form-label{font-size:12px;font-weight:600;color:#374151;display:block;margin-bottom:4px;}
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 4px 20px rgba(0,0,0,0.15);display:none;}
+.toast.success{background:#dcfce7;color:#16a34a;border:1px solid #bbf7d0;}
+.toast.error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;}
 </style>
 </head>
 <body>
@@ -76,6 +80,12 @@ input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,
     </button>
   </div>
 
+  <!-- API Error Banner -->
+  <div id="api-error-banner" style="display:none;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:14px 18px;border-radius:12px;margin-bottom:16px;font-size:13px;font-weight:600;">
+    <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:6px;">warning</span>
+    <span id="api-error-text"></span>
+  </div>
+
   <div class="card">
     <div style="position:relative;margin-bottom:16px;">
       <span class="material-symbols-outlined" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:18px;">search</span>
@@ -108,16 +118,40 @@ input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,
       <div style="font-weight:800;font-size:16px;color:var(--primary);">Add New Faculty</div>
       <button onclick="closeAddModal()" style="background:none;border:none;cursor:pointer;color:#9ca3af;"><span class="material-symbols-outlined">close</span></button>
     </div>
-    <div id="modal-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px;border-radius:8px;font-size:13px;margin-bottom:12px;"></div>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <input id="f-name" placeholder="Full Name" type="text" autocomplete="off"/>
-      <input id="f-email" placeholder="Email" type="email" autocomplete="off"/>
-      <input id="f-password" placeholder="Password" type="password" autocomplete="new-password"/>
-      <input id="f-code" placeholder="Employee Code" type="text" autocomplete="off"/>
-      <input id="f-phone" placeholder="Phone (optional)" type="tel" autocomplete="off"/>
-      <input id="f-designation" placeholder="Designation (e.g. Assistant Professor)" type="text" autocomplete="off"/>
-      <select id="f-department"><option value="">Select Department</option></select>
-      <input id="f-joining" placeholder="Joining Date" type="date"/>
+    <div id="modal-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px;border-radius:8px;font-size:13px;margin-bottom:12px;word-break:break-all;"></div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <label class="form-label">Full Name *</label>
+        <input id="f-name" placeholder="e.g. Dr. Amit Verma" type="text" autocomplete="off"/>
+      </div>
+      <div>
+        <label class="form-label">Email *</label>
+        <input id="f-email" placeholder="e.g. faculty@rsit.edu" type="email" autocomplete="off"/>
+      </div>
+      <div>
+        <label class="form-label">Password *</label>
+        <input id="f-password" placeholder="Min 6 characters" type="password" autocomplete="new-password"/>
+      </div>
+      <div>
+        <label class="form-label">Employee Code *</label>
+        <input id="f-code" placeholder="e.g. FAC011" type="text" autocomplete="off"/>
+      </div>
+      <div>
+        <label class="form-label">Phone (optional)</label>
+        <input id="f-phone" placeholder="e.g. 9876543210" type="tel" autocomplete="off"/>
+      </div>
+      <div>
+        <label class="form-label">Designation *</label>
+        <input id="f-designation" placeholder="e.g. Assistant Professor" type="text" autocomplete="off"/>
+      </div>
+      <div>
+        <label class="form-label">Department *</label>
+        <select id="f-department"><option value="">Select Department</option></select>
+      </div>
+      <div>
+        <label class="form-label">Joining Date</label>
+        <input id="f-joining" type="date"/>
+      </div>
     </div>
     <div style="display:flex;gap:10px;margin-top:20px;">
       <button onclick="closeAddModal()" style="flex:1;border:1.5px solid #e5e7eb;background:white;padding:10px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:600;">Cancel</button>
@@ -136,33 +170,70 @@ input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,
   </div>
 </nav>
 
+<div class="toast" id="toast"></div>
+
 <script>
 const API_URL = 'https://student-erp-production.up.railway.app';
 const token = localStorage.getItem('token');
 const _user = JSON.parse(localStorage.getItem('user') || '{}');
-if (!token) window.location.href = '../login_edumanage_erp/code.html';
-// Fix duplicate name bug — only set once here
+if (!token) { window.location.href = '../login_edumanage_erp/code.html'; }
+
 document.getElementById('admin-name').textContent = _user.full_name || 'Admin';
-document.getElementById('admin-role').textContent = _user.roles?.name ? _user.roles.name.charAt(0).toUpperCase() + _user.roles.name.slice(1) : 'Administrator';
-const headers = { 'Content-Type':'application/json', 'Authorization':'Bearer '+token };
+document.getElementById('admin-role').textContent = _user.roles?.name
+  ? _user.roles.name.charAt(0).toUpperCase() + _user.roles.name.slice(1)
+  : 'Administrator';
+
+const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token };
 let allFaculty = [];
+
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, 3500);
+}
+
+function showApiError(msg) {
+  const banner = document.getElementById('api-error-banner');
+  document.getElementById('api-error-text').textContent = msg;
+  banner.style.display = 'block';
+}
 
 async function loadFaculty() {
   try {
     const res = await fetch(`${API_URL}/api/faculty`, { headers });
-    allFaculty = await res.json();
+    if (res.status === 401 || res.status === 403) {
+      showApiError('Session expired or unauthorized. Please log out and log in again.');
+      document.getElementById('faculty-table').innerHTML =
+        '<tr><td colspan="5" style="text-align:center;padding:40px;color:#dc2626;">Unauthorized — please log in again.</td></tr>';
+      return;
+    }
+    const data = await res.json();
+    if (!Array.isArray(data)) {
+      showApiError('API error: ' + (data.error || data.message || JSON.stringify(data)));
+      document.getElementById('faculty-table').innerHTML =
+        '<tr><td colspan="5" style="text-align:center;padding:40px;color:#dc2626;">Unexpected API response. Check error banner.</td></tr>';
+      return;
+    }
+    allFaculty = data;
     renderFaculty(allFaculty);
-  } catch(e) {
-    document.getElementById('faculty-table').innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:#dc2626;">Failed to load faculty</td></tr>';
+  } catch (e) {
+    showApiError('Network error: ' + e.message);
+    document.getElementById('faculty-table').innerHTML =
+      '<tr><td colspan="5" style="text-align:center;padding:40px;color:#dc2626;">Failed to connect to server.</td></tr>';
   }
 }
 
 function renderFaculty(faculty) {
   const tbody = document.getElementById('faculty-table');
-  if (!faculty.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:#9ca3af;">No faculty found</td></tr>'; return; }
+  if (!faculty.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:#9ca3af;">No faculty found</td></tr>';
+    return;
+  }
   tbody.innerHTML = faculty.map(f => {
     const name = f.users?.full_name || 'N/A';
-    const initials = name.split(' ').map(n=>n[0]).join('').slice(0,2).toUpperCase();
+    const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
     return `<tr>
       <td>
         <div style="display:flex;align-items:center;gap:10px;">
@@ -177,7 +248,7 @@ function renderFaculty(faculty) {
       <td>${f.departments?.name || 'N/A'}</td>
       <td class="hide-mobile">${f.designation || 'N/A'}</td>
       <td>
-        <button onclick="deleteFaculty('${f.id}')" style="background:#fef2f2;border:none;color:#dc2626;padding:6px;border-radius:8px;cursor:pointer;">
+        <button onclick="deleteFaculty('${f.id}')" style="background:#fef2f2;border:none;color:#dc2626;padding:6px;border-radius:8px;cursor:pointer;" title="Delete faculty">
           <span class="material-symbols-outlined" style="font-size:16px;">delete</span>
         </button>
       </td>
@@ -196,47 +267,104 @@ function searchFaculty() {
 async function loadDepartments() {
   try {
     const res = await fetch(`${API_URL}/api/departments`, { headers });
+    if (!res.ok) return;
     const depts = await res.json();
+    if (!Array.isArray(depts)) return;
     const sel = document.getElementById('f-department');
-    depts.forEach(d => { const o = document.createElement('option'); o.value = d.id; o.textContent = d.name; sel.appendChild(o); });
-  } catch(e) {}
+    depts.forEach(d => {
+      const o = document.createElement('option');
+      o.value = d.id;
+      o.textContent = d.name;
+      sel.appendChild(o);
+    });
+  } catch (e) {}
 }
 
-function openAddModal() { document.getElementById('add-modal').style.display = 'flex'; }
-function closeAddModal() { document.getElementById('add-modal').style.display = 'none'; document.getElementById('modal-error').style.display = 'none'; }
+function openAddModal() {
+  document.getElementById('add-modal').style.display = 'flex';
+  document.getElementById('modal-error').style.display = 'none';
+  ['f-name','f-email','f-password','f-code','f-phone','f-designation','f-joining'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-department').selectedIndex = 0;
+}
+
+function closeAddModal() {
+  document.getElementById('add-modal').style.display = 'none';
+  document.getElementById('modal-error').style.display = 'none';
+}
 
 async function addFaculty() {
   const btn = document.getElementById('add-btn');
   const errDiv = document.getElementById('modal-error');
-  const body = {
-    full_name: document.getElementById('f-name').value,
-    email: document.getElementById('f-email').value,
-    password: document.getElementById('f-password').value,
-    employee_code: document.getElementById('f-code').value,
-    phone: document.getElementById('f-phone').value,
-    designation: document.getElementById('f-designation').value,
-    department_id: document.getElementById('f-department').value,
-    joining_date: document.getElementById('f-joining').value || undefined,
-  };
-  btn.disabled = true; btn.textContent = 'Adding...'; errDiv.style.display = 'none';
+  errDiv.style.display = 'none';
+
+  const full_name = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const password = document.getElementById('f-password').value;
+  const employee_code = document.getElementById('f-code').value.trim();
+  const designation = document.getElementById('f-designation').value.trim();
+  const department_id = document.getElementById('f-department').value;
+  const phone = document.getElementById('f-phone').value.trim();
+  const joining_date = document.getElementById('f-joining').value;
+
+  // Validation
+  if (!full_name) { errDiv.textContent = 'Full name is required.'; errDiv.style.display = 'block'; return; }
+  if (!email || !email.includes('@')) { errDiv.textContent = 'Valid email is required.'; errDiv.style.display = 'block'; return; }
+  if (!password || password.length < 6) { errDiv.textContent = 'Password must be at least 6 characters.'; errDiv.style.display = 'block'; return; }
+  if (!employee_code) { errDiv.textContent = 'Employee code is required.'; errDiv.style.display = 'block'; return; }
+  if (!designation) { errDiv.textContent = 'Designation is required.'; errDiv.style.display = 'block'; return; }
+  if (!department_id) { errDiv.textContent = 'Please select a department.'; errDiv.style.display = 'block'; return; }
+
+  const body = { full_name, email, password, employee_code, designation, department_id };
+  if (phone) body.phone = phone;
+  if (joining_date) body.joining_date = joining_date;
+
+  btn.disabled = true; btn.textContent = 'Adding...';
   try {
-    const res = await fetch(`${API_URL}/api/faculty`, { method:'POST', headers, body:JSON.stringify(body) });
+    const res = await fetch(`${API_URL}/api/faculty`, { method: 'POST', headers, body: JSON.stringify(body) });
     const data = await res.json();
-    if (!res.ok) throw new Error(JSON.stringify(data.error));
-    closeAddModal(); loadFaculty();
-  } catch(e) { errDiv.textContent = 'Error: '+e.message; errDiv.style.display = 'block'; }
-  finally { btn.disabled = false; btn.textContent = 'Add Faculty'; }
+    if (!res.ok) {
+      const errMsg = typeof data.error === 'object'
+        ? JSON.stringify(data.error)
+        : (data.error || data.message || `HTTP ${res.status}`);
+      throw new Error(errMsg);
+    }
+    closeAddModal();
+    loadFaculty();
+    showToast('Faculty member added successfully!', 'success');
+  } catch (e) {
+    errDiv.textContent = 'Error: ' + e.message;
+    errDiv.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Add Faculty';
+  }
 }
 
 async function deleteFaculty(id) {
-  if (!confirm('Delete this faculty member?')) return;
-  try { await fetch(`${API_URL}/api/faculty/${id}`, { method:'DELETE', headers }); loadFaculty(); }
-  catch(e) { alert('Failed to delete faculty'); }
+  if (!confirm('Are you sure you want to delete this faculty member? This cannot be undone.')) return;
+  try {
+    const res = await fetch(`${API_URL}/api/faculty/${id}`, { method: 'DELETE', headers });
+    if (!res.ok) {
+      const d = await res.json().catch(() => ({}));
+      showToast('Failed to delete: ' + (d.error || res.status), 'error');
+      return;
+    }
+    showToast('Faculty member deleted.', 'success');
+    loadFaculty();
+  } catch (e) {
+    showToast('Network error: ' + e.message, 'error');
+  }
 }
 
-function logout() { localStorage.removeItem('token'); localStorage.removeItem('user'); window.location.href = '../login_edumanage_erp/code.html'; }
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '../login_edumanage_erp/code.html';
+}
 
-loadFaculty(); loadDepartments();
+loadFaculty();
+loadDepartments();
 </script>
 </body>
 </html>
