@@ -30,7 +30,30 @@ body{font-family:'Inter',sans-serif;background:#f3f4f6;}
 .bn-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;color:rgba(255,255,255,0.6);font-size:10px;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.2s;}
 .bn-item.active,.bn-item:hover{color:var(--gold);}
 .bn-item .material-symbols-outlined{font-size:22px;}
-@media(max-width:768px){.sidebar{display:none;}.main{margin-left:0;padding:14px;padding-bottom:80px;}.bottom-nav{display:block;}}
+
+html,body{overflow-x:hidden;max-width:100vw;}
+*{max-width:100%;}
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .main{margin-left:0!important;padding:12px!important;padding-bottom:90px!important;width:100%!important;box-sizing:border-box;}
+  .bottom-nav{display:block;}
+  table{font-size:11px;}
+  th,td{padding:8px 6px!important;}
+}
+@media(max-width:480px){
+  .main{padding:10px!important;}
+  .rsit-header{padding:8px 12px!important;}
+  .rsit-tag{font-size:11px!important;}
+}
+/* Mobile profile card - shown only on mobile, mirrors sidebar profile */
+.mobile-profile-card{display:none;background:linear-gradient(135deg,#1a2f5e,#2a4a8e);border-radius:14px;padding:16px;margin-bottom:16px;color:white;}
+@media(max-width:900px){.mobile-profile-card{display:block;}}
+.mobile-profile-card .mp-name{font-weight:800;font-size:15px;}
+.mobile-profile-card .mp-role{color:#c9a84c;font-size:11px;font-weight:700;letter-spacing:1px;margin-bottom:10px;}
+.mobile-profile-card .mp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;}
+.mobile-profile-card .mp-label{color:rgba(255,255,255,0.5);font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+.mobile-profile-card .mp-val{color:white;font-weight:600;margin-top:1px;}
+
 .card{background:white;border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.07);margin-bottom:20px;}
 .stat-card{background:white;border-radius:14px;padding:18px;box-shadow:0 1px 6px rgba(0,0,0,0.07);text-align:center;}
 .danger-alert{background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;margin-bottom:20px;}
@@ -74,6 +97,17 @@ body{font-family:'Inter',sans-serif;background:#f3f4f6;}
 </aside>
 
 <main class="main">
+  <div class="mobile-profile-card">
+    <div class="mp-name" id="mp-name">Loading...</div>
+    <div class="mp-role">STUDENT PROFILE</div>
+    <div class="mp-grid">
+      <div><div class="mp-label">Enrollment</div><div class="mp-val" id="mp-enrollment">--</div></div>
+      <div><div class="mp-label">Department</div><div class="mp-val" id="mp-dept">--</div></div>
+      <div><div class="mp-label">Semester</div><div class="mp-val" id="mp-sem">--</div></div>
+      <div><div class="mp-label">Batch</div><div class="mp-val" id="mp-batch">--</div></div>
+    </div>
+  </div>
+
   <div style="font-size:20px;font-weight:900;color:var(--primary);margin-bottom:4px;">My Attendance</div>
   <div style="font-size:13px;color:#6b7280;margin-bottom:20px;">Subject-wise attendance with 75% minimum requirement</div>
 
@@ -151,6 +185,11 @@ async function loadStudentProfile() {
       document.getElementById('s-dept-disp').textContent = me.departments?.name || '--';
       document.getElementById('s-sem-disp').textContent = 'Semester ' + (me.semester || '--');
       document.getElementById('s-batch-disp').textContent = me.batch_year || '--';
+      document.getElementById('mp-name').textContent = me.users?.full_name || _user.full_name || '--';
+      document.getElementById('mp-enrollment').textContent = me.enrollment_number || '--';
+      document.getElementById('mp-dept').textContent = me.departments?.name || '--';
+      document.getElementById('mp-sem').textContent = 'Sem ' + (me.semester || '--');
+      document.getElementById('mp-batch').textContent = me.batch_year || '--';
     }
   } catch(e) {}
 }
