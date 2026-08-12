@@ -106,3 +106,18 @@ export const deleteFaculty = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+export const getMyFacultyProfile = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const { data, error } = await supabase
+      .from('faculty')
+      .select('*, users(full_name, email, phone), departments(name)')
+      .eq('user_id', userId)
+      .single();
+    if (error) return res.status(404).json({ error: 'Faculty profile not found' });
+    return res.json(data);
+  } catch (err) {
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
